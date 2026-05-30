@@ -10,13 +10,12 @@
     h1 { color: #fff; font-size: 2.5rem; letter-spacing: 4px; margin-bottom: 1.5rem; }
     .video-wrap { position: relative; max-width: 90vw; }
     video { max-width: 90vw; max-height: 75vh; border-radius: 12px 12px 0 0; display: block; }
+    .reveal-overlay { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px 12px 0 0; }
+    .reveal-overlay span { color: #fff; font-size: 1.8rem; letter-spacing: 3px; }
     .speed-badge { position: absolute; top: 12px; right: 12px; background: #ff0055; color: #fff; font-size: 1rem; padding: 4px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .speed-badge.show { opacity: 1; }
-    .fake-controls { background: #1c1c1c; border-radius: 0 0 12px 12px; padding: 8px 14px; display: flex; align-items: center; gap: 10px; }
-    .mute-btn { background: none; border: none; cursor: pointer; color: #fff; font-size: 1.2rem; display: flex; align-items: center; padding: 2px 4px; }
-    .volume-bar { flex: 1; height: 4px; background: #444; border-radius: 2px; cursor: pointer; }
-    .volume-fill { height: 100%; width: 70%; background: #fff; border-radius: 2px; }
-    .time-label { color: #aaa; font-size: 0.75rem; font-family: sans-serif; }
+    .fake-controls { background: #1c1c1c; border-radius: 0 0 12px 12px; padding: 8px 14px; display: flex; align-items: center; justify-content: center; }
+    .mute-btn { background: none; border: none; cursor: pointer; color: #aaa; font-family: sans-serif; font-size: 0.85rem; letter-spacing: 1px; }
     .credit { color: #555; font-size: 0.8rem; margin-top: 1rem; font-family: sans-serif; }
     .credit span { color: #fff; }
   </style>
@@ -24,20 +23,13 @@
 <body>
   <h1>HAPPY BIRTHDAY ADIL</h1>
   <div class="video-wrap">
-    <video id="vid" src="video.mp4" autoplay loop muted playsinline></video>
+    <video id="vid" src="video.mp4" loop playsinline></video>
+    <div class="reveal-overlay" id="overlay">
+      <span>Click to reveal</span>
+    </div>
     <div class="speed-badge" id="badge"></div>
     <div class="fake-controls">
-      <button class="mute-btn" id="muteBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        </svg>
-      </button>
-      <div class="volume-bar" id="volBar">
-        <div class="volume-fill"></div>
-      </div>
-      <span class="time-label" id="timeLabel">0:00</span>
+      <button class="mute-btn" id="muteBtn">Mute this video</button>
     </div>
   </div>
   <p class="credit">by <span>Rishi Kohli, the GOAT</span></p>
@@ -45,7 +37,14 @@
   <script>
     const vid = document.getElementById('vid');
     const badge = document.getElementById('badge');
+    const overlay = document.getElementById('overlay');
     let badgeTimer;
+
+    overlay.addEventListener('click', () => {
+      vid.muted = false;
+      vid.play();
+      overlay.style.display = 'none';
+    });
 
     function speedUp() {
       vid.playbackRate = Math.min(parseFloat((vid.playbackRate + 0.3).toFixed(1)), 16);
@@ -56,13 +55,6 @@
     }
 
     document.getElementById('muteBtn').addEventListener('click', speedUp);
-    document.getElementById('volBar').addEventListener('click', speedUp);
-
-    vid.addEventListener('timeupdate', () => {
-      const m = Math.floor(vid.currentTime / 60);
-      const s = Math.floor(vid.currentTime % 60).toString().padStart(2, '0');
-      document.getElementById('timeLabel').textContent = m + ':' + s;
-    });
   </script>
 </body>
 </html>
