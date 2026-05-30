@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Adil</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: Impact, sans-serif; }
+    h1 { color: #fff; font-size: 2.5rem; letter-spacing: 4px; margin-bottom: 1.5rem; }
+    .video-wrap { position: relative; max-width: 90vw; }
+    video { max-width: 90vw; max-height: 80vh; border-radius: 12px; display: block; }
+    .speed-badge { position: absolute; top: 12px; right: 12px; background: #ff0055; color: #fff; font-size: 1rem; padding: 4px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .speed-badge.show { opacity: 1; }
+    .blocker { position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; cursor: not-allowed; }
+    .credit { color: #555; font-size: 0.8rem; margin-top: 1rem; font-family: sans-serif; }
+    .credit span { color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>HAPPY BIRTHDAY ADIL</h1>
+  <div class="video-wrap">
+    <video id="vid" src="video.mp4" autoplay loop muted playsinline></video>
+    <div class="speed-badge" id="badge"></div>
+    <div class="blocker" id="blocker"></div>
+  </div>
+  <p class="credit">by <span>Rishi Kohli, the GOAT</span></p>
+
+  <script>
+    const vid = document.getElementById('vid');
+    const badge = document.getElementById('badge');
+    const blocker = document.getElementById('blocker');
+    let badgeTimer;
+
+    blocker.addEventListener('click', () => {
+      vid.playbackRate = Math.min(vid.playbackRate + 0.3, 16);
+      badge.textContent = vid.playbackRate.toFixed(1) + 'x';
+      badge.classList.add('show');
+      clearTimeout(badgeTimer);
+      badgeTimer = setTimeout(() => badge.classList.remove('show'), 1200);
+    });
+  </script>
+</body>
+</html>
