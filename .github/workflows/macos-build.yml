@@ -1,0 +1,12 @@
+name: macos-build
+on:
+  push:
+    paths: ['macos/**', '.github/workflows/macos-build.yml']
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build app bundle
+        working-directory: macos
+        run: ./scripts/build_app.sh
