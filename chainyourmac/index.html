@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chain Your Mac</title>
+  <style>
+    :root {
+      --bg: #0b0b0f; --panel: #14141b; --line: #262633; --text: #ececf3; --muted: #8b8b9c;
+      --accent: #7c5cff; --accent2: #35d0ba;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; line-height: 1.5; }
+    a { color: inherit; text-decoration: none; }
+    nav { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+    .logo { font-weight: 700; letter-spacing: -0.02em; }
+    .logo b { color: var(--accent); }
+    .btn { display: inline-block; background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; border: 0; cursor: pointer; }
+    .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--text); }
+    .hero { text-align: center; max-width: 780px; margin: 0 auto; padding: 56px 16px 32px; }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.8rem); letter-spacing: -0.03em; line-height: 1.05; }
+    .hero h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero p { color: var(--muted); font-size: 1.15rem; margin: 18px auto 28px; max-width: 560px; }
+    .hero .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    #demo { max-width: 1100px; margin: 24px auto 0; padding: 0 16px; }
+    .demo-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .group { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: 0.8rem; }
+    .group button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; cursor: pointer; }
+    .group button:hover, .group button.on { border-color: var(--accent); }
+    .screen { position: relative; height: 440px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: radial-gradient(120% 120% at 20% 0%, #2a1f5c 0%, #10101a 60%); user-select: none; }
+    .strip { position: absolute; top: 0; bottom: 0; left: 0; display: flex; transition: transform 0.45s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+    .strip.drag { transition: none; }
+    .col { flex: none; display: flex; flex-direction: column; height: 100%; }
+    .win { flex: 1; min-height: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s, opacity 0.3s; opacity: 0.7; cursor: pointer; }
+    .win.focus { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 20px 50px rgba(124, 92, 255, 0.25); }
+    .title { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 0.75rem; color: var(--muted); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; }
+    .dot:nth-child(2) { background: #febc2e; } .dot:nth-child(3) { background: #28c840; }
+    .title em { margin-left: 6px; font-style: normal; }
+    .body { flex: 1; padding: 12px; font-size: 0.8rem; overflow: hidden; }
+    .line { height: 8px; border-radius: 4px; background: var(--line); margin-bottom: 8px; }
+    .code { font-family: ui-monospace, Menlo, monospace; color: #b9a8ff; white-space: pre; line-height: 1.6; }
+    .code i { color: var(--accent2); font-style: normal; }
+    .hue { height: 100%; border-radius: 8px; }
+    .minimap { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; gap: 6px; padding: 6px 10px; background: rgba(10,10,15,.7); border: 1px solid var(--line); border-radius: 999px; backdrop-filter: blur(8px); }
+    .minimap span { width: 22px; height: 6px; border-radius: 3px; background: var(--line); transition: background .2s; }
+    .minimap span.on { background: var(--accent); }
+    .hint { color: var(--muted); font-size: 0.85rem; margin-top: 12px; text-align: center; }
+    kbd { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; font-size: 0.8rem; }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; max-width: 1100px; margin: 64px auto; padding: 0 16px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+    .card h3 { margin-bottom: 6px; font-size: 1.05rem; }
+    .card p { color: var(--muted); font-size: 0.95rem; }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 40px 16px 56px; border-top: 1px solid var(--line); }
+    @media (max-width: 600px) { .screen { height: 380px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="#">chain<b>your</b>mac</a>
+    <a class="btn ghost" href="#demo">Try the demo</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Your windows, on <span>one endless strip</span>.</h1>
+    <p>A scrolling window manager for macOS. Stop stacking and overlapping. Line windows up side by side and glide between them.</p>
+    <div class="cta">
+      <a class="btn" href="#demo">Try the demo</a>
+      <a class="btn ghost" href="#features">See features</a>
+    </div>
+  </header>
+
+  <section id="demo">
+    <div class="demo-bar">
+      <div class="group">Width
+        <button data-w="0.33">Third</button>
+        <button data-w="0.5" class="on">Half</button>
+        <button data-w="0.8">Wide</button>
+      </div>
+      <div class="group">Gap
+        <button data-g="0">None</button>
+        <button data-g="12" class="on">Normal</button>
+        <button data-g="28">Loose</button>
+      </div>
+      <div class="group">
+        <button id="stackBtn">Stack column</button>
+        <button id="addBtn">+ Window</button>
+      </div>
+    </div>
+    <div class="screen" id="screen">
+      <div class="strip" id="strip"></div>
+      <div class="minimap" id="minimap"></div>
+    </div>
+    <p class="hint">Use <kbd>←</kbd> <kbd>→</kbd>, scroll sideways, drag, or click a window.</p>
+  </section>
+
+  <section class="features" id="features">
+    <div class="card"><h3>Infinite strip</h3><p>Windows sit on a horizontal strip. Opening a new one never resizes the others.</p></div>
+    <div class="card"><h3>Stacked columns</h3><p>Pile a few windows into one column when you want chat and notes together.</p></div>
+    <div class="card"><h3>Preset widths</h3><p>Snap any column to a third, half or wide. Tune the gaps to taste.</p></div>
+    <div class="card"><h3>Native feel</h3><p>Built for Apple silicon on macOS 13 and up, driven by keyboard, trackpad or mouse.</p></div>
+  </section>
+
+  <footer>A fan-made rebuild of the Chain Your Mac demo. Not affiliated with the original.</footer>
+
+  <script>
+    const screen = document.getElementById('screen');
+    const strip = document.getElementById('strip');
+    const minimap = document.getElementById('minimap');
+    let widthFrac = 0.5, gap = 12, focus = 0;
+
+    const apps = [
+      { name: 'Editor', kind: 'code' }, { name: 'Browser', kind: 'lines' },
+      { name: 'Terminal', kind: 'code2' }, { name: 'Notes', kind: 'lines' },
+      { name: 'Design', kind: 'hue', h: 260 }, { name: 'Music', kind: 'hue', h: 170 },
+      { name: 'Mail', kind: 'lines' }
+    ];
+    // each column is an array of app indexes
+    let cols = apps.map((_, i) => [i]);
+    let extra = 0;
+
+    function bodyFor(a) {
+      if (a.kind === 'code') return '<div class="code">function <i>chain</i>(win) {\n  strip.push(win)\n  return focus(win)\n}</div>';
+      if (a.kind === 'code2') return '<div class="code">$ <i>chain</i> --left\n$ <i>chain</i> --width half\nok</div>';
+      if (a.kind === 'hue') return '<div class="hue" style="background:linear-gradient(135deg,hsl(' + a.h + ' 80% 55%),hsl(' + (a.h + 60) + ' 80% 35%))"></div>';
+      return '<div class="line" style="width:90%"></div><div class="line" style="width:70%"></div><div class="line" style="width:80%"></div><div class="line" style="width:50%"></div><div class="line" style="width:75%"></div>';
+    }
+
+    function colWidth() { return Math.round(screen.clientWidth * widthFrac); }
+
+    function render() {
+      const w = colWidth();
+      strip.style.gap = gap + 'px';
+      strip.style.padding = gap + 'px';
+      strip.innerHTML = '';
+      cols.forEach((col, ci) => {
+        const c = document.createElement('div');
+        c.className = 'col';
+        c.style.width = w + 'px';
+        c.style.gap = gap + 'px';
+        col.forEach(ai => {
+          const a = apps[ai];
+          const el = document.createElement('div');
+          el.className = 'win' + (ci === focus ? ' focus' : '');
+          el.innerHTML = '<div class="title"><span class="dot"></span><span class="dot"></span><span class="dot"></span><em>' + a.name + '</em></div><div class="body">' + bodyFor(a) + '</div>';
+          el.addEventListener('click', () => go(ci));
+          c.appendChild(el);
+        });
+        strip.appendChild(c);
+      });
+      minimap.innerHTML = cols.map((_, i) => '<span class="' + (i === focus ? 'on' : '') + '"></span>').join('');
+      position();
+    }
+
+    function position() {
+      const w = colWidth();
+      // center the focused column, clamped to strip bounds
+      const total = cols.length * (w + gap) + gap;
+      let x = gap + focus * (w + gap) + w / 2 - screen.clientWidth / 2;
+      x = Math.max(0, Math.min(x, Math.max(0, total - screen.clientWidth)));
+      strip.style.transform = 'translateX(' + (-x) + 'px)';
+      strip._x = x;
+      [...strip.children].forEach((c, i) => c.querySelectorAll('.win').forEach(wn => wn.classList.toggle('focus', i === focus)));
+      [...minimap.children].forEach((s, i) => s.classList.toggle('on', i === focus));
+    }
+
+    function go(i) { focus = Math.max(0, Math.min(cols.length - 1, i)); position(); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { go(focus + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { go(focus - 1); e.preventDefault(); }
+    });
+
+    let wheelLock = false;
+    screen.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || wheelLock) return;
+      e.preventDefault();
+      go(focus + (e.deltaX > 0 ? 1 : -1));
+      wheelLock = true; setTimeout(() => wheelLock = false, 350);
+    }, { passive: false });
+
+    // drag to scroll
+    let startX = null, startPos = 0;
+    screen.addEventListener('pointerdown', e => { startX = e.clientX; startPos = strip._x || 0; });
+    window.addEventListener('pointermove', e => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 6) { strip.classList.add('drag'); strip.style.transform = 'translateX(' + (-(startPos - dx)) + 'px)'; }
+    });
+    window.addEventListener('pointerup', e => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      startX = null;
+      strip.classList.remove('drag');
+      if (Math.abs(dx) > 40) go(focus + (dx < 0 ? 1 : -1)); else position();
+    });
+
+    document.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => {
+      widthFrac = parseFloat(b.dataset.w);
+      document.querySelectorAll('[data-w]').forEach(x => x.classList.toggle('on', x === b));
+      render();
+    }));
+    document.querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => {
+      gap = parseInt(b.dataset.g, 10);
+      document.querySelectorAll('[data-g]').forEach(x => x.classList.toggle('on', x === b));
+      render();
+    }));
+
+    // stack the focused column with the next one, or unstack if already stacked
+    document.getElementById('stackBtn').addEventListener('click', () => {
+      if (cols[focus].length > 1) {
+        const [first, ...rest] = cols[focus];
+        cols.splice(focus, 1, [first], ...rest.map(r => [r]));
+      } else if (cols[focus + 1]) {
+        cols.splice(focus, 2, [...cols[focus], ...cols[focus + 1]]);
+      }
+      render();
+    });
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+      extra++;
+      apps.push({ name: 'Window ' + extra, kind: extra % 2 ? 'lines' : 'hue', h: (extra * 70) % 360 });
+      cols.splice(focus + 1, 0, [apps.length - 1]);
+      focus++;
+      render();
+    });
+
+    window.addEventListener('resize', render);
+    render();
+  </script>
+</body>
+</html>
