@@ -1,0 +1,307 @@
+diff --git a/lib/core/data/data_source/health/health_service_factory.dart b/lib/core/data/data_source/health/health_service_factory.dart
+index 670fa4c..d1a9089 100644
+--- a/lib/core/data/data_source/health/health_service_factory.dart
++++ b/lib/core/data/data_source/health/health_service_factory.dart
+@@ -1,3 +1,4 @@
++import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'dart:io' show Platform;
+ 
+ import 'package:logging/logging.dart';
+@@ -14,7 +15,7 @@ final _log = Logger('HealthServiceFactory');
+ /// itself unavailable. A health plugin that cannot initialise must never be
+ /// able to stop the app from launching.
+ Future<HealthService> createHealthService() async {
+-  if (!Platform.isAndroid && !Platform.isIOS) {
++  if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+     return const NoopHealthService();
+   }
+   try {
+diff --git a/lib/core/utils/app_const.dart b/lib/core/utils/app_const.dart
+index 1485b30..a32ae0d 100644
+--- a/lib/core/utils/app_const.dart
++++ b/lib/core/utils/app_const.dart
+@@ -1,3 +1,4 @@
++import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'dart:io' show Platform;
+ import 'package:package_info_plus/package_info_plus.dart';
+ 
+@@ -15,7 +16,9 @@ class AppConst {
+   }
+ 
+   static String getPlatformName() {
+-    if (Platform.isAndroid) {
++    if (kIsWeb) {
++      return "Web";
++    } else if (Platform.isAndroid) {
+       return platformNameAndroid;
+     } else if (Platform.isIOS) {
+       return platformNameIOS;
+diff --git a/lib/core/utils/app_locale.dart b/lib/core/utils/app_locale.dart
+index debc75a..d1bd0a5 100644
+--- a/lib/core/utils/app_locale.dart
++++ b/lib/core/utils/app_locale.dart
+@@ -1,3 +1,4 @@
++import 'package:opennutritracker/core/utils/device_locale.dart';
+ import 'dart:io';
+ import 'dart:ui' show Locale, PlatformDispatcher;
+ 
+@@ -11,7 +12,7 @@ import 'package:opennutritracker/generated/l10n.dart';
+ /// language to ask Open Food Facts and the food backend for.
+ ///
+ /// Widgets read the locale from `LocaleProvider`. Off the tree the only
+-/// signal used to be `Platform.localeName`, which is the *device* language:
++/// signal used to be `deviceLocaleName`, which is the *device* language:
+ /// it follows the in-app picker only on Android 13+, where
+ /// `AppLocaleService` writes the choice through to the per-app setting. On
+ /// iOS and older Android it does not, so an English phone set to German in
+@@ -41,7 +42,7 @@ class AppLocale {
+ 
+   static String get _systemLocaleName {
+     final preferred = preferredLocales();
+-    if (preferred.isEmpty) return Platform.localeName;
++    if (preferred.isEmpty) return deviceLocaleName;
+     return basicLocaleListResolution(
+       preferred,
+       appLocales(S.supportedLocales),
+diff --git a/lib/core/utils/device_locale.dart b/lib/core/utils/device_locale.dart
+new file mode 100644
+index 0000000..5ae96e3
+--- /dev/null
++++ b/lib/core/utils/device_locale.dart
+@@ -0,0 +1,9 @@
++import 'dart:io' show Platform;
++import 'dart:ui' show PlatformDispatcher;
++
++import 'package:flutter/foundation.dart' show kIsWeb;
++
++/// The device locale as `language_COUNTRY`. `Platform.localeName` throws on
++/// web, so the browser locale is read from the engine there.
++String get deviceLocaleName =>
++    kIsWeb ? PlatformDispatcher.instance.locale.toString() : Platform.localeName;
+diff --git a/lib/core/utils/secure_app_storage_provider.dart b/lib/core/utils/secure_app_storage_provider.dart
+index 15ec55f..13841a0 100644
+--- a/lib/core/utils/secure_app_storage_provider.dart
++++ b/lib/core/utils/secure_app_storage_provider.dart
+@@ -2,6 +2,7 @@ import 'dart:convert';
+ import 'dart:io';
+ import 'dart:typed_data';
+ 
++import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+ import 'package:opennutritracker/core/utils/hive_db_provider.dart';
+ import 'package:opennutritracker/core/utils/hive_storage_integrity_exception.dart';
+@@ -95,6 +96,8 @@ class SecureAppStorageProvider {
+   /// non-empty `*.hive` file. Used to distinguish first install from a
+   /// partial secure-storage loss.
+   Future<bool> _hasExistingEncryptedHiveData() async {
++    // Web keeps Hive in IndexedDB, there is no documents directory to scan.
++    if (kIsWeb) return false;
+     final directory = await getApplicationDocumentsDirectory();
+     if (!await directory.exists()) return false;
+ 
+diff --git a/lib/core/utils/widget/calorie_widget_writer.dart b/lib/core/utils/widget/calorie_widget_writer.dart
+index 3fd6736..a93cba5 100644
+--- a/lib/core/utils/widget/calorie_widget_writer.dart
++++ b/lib/core/utils/widget/calorie_widget_writer.dart
+@@ -1,3 +1,4 @@
++import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'dart:convert';
+ import 'dart:io';
+ 
+@@ -46,7 +47,7 @@ class HomeWidgetCalorieStore implements CalorieWidgetStore {
+   HomeWidgetCalorieStore({
+     @visibleForTesting bool? isIOS,
+     @visibleForTesting Future<String> Function()? bundleId,
+-  }) : _isIOS = isIOS ?? Platform.isIOS,
++  }) : _isIOS = isIOS ?? (!kIsWeb && Platform.isIOS),
+        _bundleId = bundleId ?? _platformBundleId;
+ 
+   static Future<String> _platformBundleId() async =>
+diff --git a/lib/features/add_meal/data/repository/products_repository.dart b/lib/features/add_meal/data/repository/products_repository.dart
+index 65e6643..f48deeb 100644
+--- a/lib/features/add_meal/data/repository/products_repository.dart
++++ b/lib/features/add_meal/data/repository/products_repository.dart
+@@ -1,3 +1,4 @@
++import 'package:opennutritracker/core/utils/device_locale.dart';
+ import 'dart:io';
+ 
+ import 'package:logging/logging.dart';
+@@ -46,7 +47,7 @@ class ProductsRepository {
+     // The country boost follows the device on purpose, not the language
+     // picked in the app: a German speaker in Austria wants Austrian
+     // products ranked up. Food-name language is AppLocale's job (#1214).
+-    final userCountryTag = OffCountry.fromLocale(Platform.localeName);
++    final userCountryTag = OffCountry.fromLocale(deviceLocaleName);
+     final candidates = <_RankedOffProduct>[];
+     for (var i = 0; i < offWordResponse.products.length; i++) {
+       final dto = offWordResponse.products[i];
+diff --git a/lib/features/onboarding/presentation/bloc/onboarding_bloc.dart b/lib/features/onboarding/presentation/bloc/onboarding_bloc.dart
+index a8fac4a..e3ae58d 100644
+--- a/lib/features/onboarding/presentation/bloc/onboarding_bloc.dart
++++ b/lib/features/onboarding/presentation/bloc/onboarding_bloc.dart
+@@ -1,3 +1,4 @@
++import 'package:opennutritracker/core/utils/device_locale.dart';
+ import 'dart:io';
+ import 'dart:ui' show Locale;
+ 
+@@ -82,7 +83,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
+       return;
+     }
+ 
+-    final defaults = LocaleUnitDefaults.fromLocale(Platform.localeName);
++    final defaults = LocaleUnitDefaults.fromLocale(deviceLocaleName);
+     userSelection.heightUsesImperial = defaults.heightUsesImperial;
+     userSelection.bodyWeightUnit = defaults.bodyWeightUnit;
+     userSelection.foodUsesImperial = defaults.foodUsesImperial;
+@@ -100,7 +101,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
+       return;
+     }
+     userSelection.foodSourceToggles = defaultFoodSourceToggles(
+-      Platform.localeName,
++      deviceLocaleName,
+     );
+   }
+ 
+diff --git a/lib/features/settings/presentation/widgets/health_sync_screen.dart b/lib/features/settings/presentation/widgets/health_sync_screen.dart
+index a203f89..07c3c33 100644
+--- a/lib/features/settings/presentation/widgets/health_sync_screen.dart
++++ b/lib/features/settings/presentation/widgets/health_sync_screen.dart
+@@ -1,3 +1,4 @@
++import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'dart:io' show Platform;
+ 
+ import 'package:auto_size_text/auto_size_text.dart';
+@@ -27,7 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
+ /// because it is a presentation-layer label; the settings row that leads to
+ /// this screen shows the same name and reads it from here.
+ String get healthPlatformName =>
+-    Platform.isIOS ? 'Apple Health' : 'Health Connect';
++    (!kIsWeb && Platform.isIOS) ? 'Apple Health' : 'Health Connect';
+ 
+ /// Whether the platform health store is asked for body fat as well as
+ /// workouts, which decides whether the disclosure mentions it.
+@@ -42,7 +43,7 @@ String get healthPlatformName =>
+ /// read there again, both have to change together — a disclosure that omits
+ /// what is read is an under-disclosure, which is the direction Play
+ /// penalises.
+-bool get healthStoreReadsBodyFat => Platform.isIOS;
++bool get healthStoreReadsBodyFat => !kIsWeb && Platform.isIOS;
+ 
+ /// Settings → Health sync: opts into importing finished workouts from Health
+ /// Connect / Apple Health, and tunes how much of the energy those workouts
+diff --git a/web/favicon.png b/web/favicon.png
+new file mode 100644
+index 0000000..51b7f29
+Binary files /dev/null and b/web/favicon.png differ
+diff --git a/web/icons/Icon-192.png b/web/icons/Icon-192.png
+new file mode 100644
+index 0000000..f01e995
+Binary files /dev/null and b/web/icons/Icon-192.png differ
+diff --git a/web/icons/Icon-512.png b/web/icons/Icon-512.png
+new file mode 100644
+index 0000000..0781abe
+Binary files /dev/null and b/web/icons/Icon-512.png differ
+diff --git a/web/icons/Icon-maskable-192.png b/web/icons/Icon-maskable-192.png
+new file mode 100644
+index 0000000..f01e995
+Binary files /dev/null and b/web/icons/Icon-maskable-192.png differ
+diff --git a/web/icons/Icon-maskable-512.png b/web/icons/Icon-maskable-512.png
+new file mode 100644
+index 0000000..0781abe
+Binary files /dev/null and b/web/icons/Icon-maskable-512.png differ
+diff --git a/web/index.html b/web/index.html
+new file mode 100644
+index 0000000..a1e0899
+--- /dev/null
++++ b/web/index.html
+@@ -0,0 +1,48 @@
++<!DOCTYPE html>
++<html>
++<head>
++  <!--
++    If you are serving your web app in a path other than the root, change the
++    href value below to reflect the base path you are serving from.
++
++    The path provided below has to start and end with a slash "/" in order for
++    it to work correctly.
++
++    For more details:
++    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
++
++    This is a placeholder for base href that will be replaced by the value of
++    the `--base-href` argument provided to `flutter build`.
++  -->
++  <base href="$FLUTTER_BASE_HREF">
++
++  <meta charset="UTF-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
++  <meta name="theme-color" content="#0E7A55">
++  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
++  <meta name="description" content="Free and open-source calorie and nutrient tracker.">
++
++  <!-- iOS meta tags & icons -->
++  <meta name="mobile-web-app-capable" content="yes">
++  <meta name="apple-mobile-web-app-status-bar-style" content="black">
++  <meta name="apple-mobile-web-app-title" content="NutriTracker">
++  <link rel="apple-touch-icon" href="icons/Icon-192.png">
++
++  <!-- Favicon -->
++  <link rel="icon" type="image/png" href="favicon.png"/>
++
++  <title>OpenNutriTracker</title>
++  <link rel="manifest" href="manifest.json">
++</head>
++<body>
++  <!--
++    You can customize the "flutter_bootstrap.js" script.
++    This is useful to provide a custom configuration to the Flutter loader
++    or to give the user feedback during the initialization process.
++
++    For more details:
++    * https://docs.flutter.dev/platform-integration/web/initialization
++  -->
++  <script src="flutter_bootstrap.js" async></script>
++</body>
++</html>
+diff --git a/web/manifest.json b/web/manifest.json
+new file mode 100644
+index 0000000..7f2ec0c
+--- /dev/null
++++ b/web/manifest.json
+@@ -0,0 +1,35 @@
++{
++    "name": "OpenNutriTracker",
++    "short_name": "NutriTracker",
++    "start_url": ".",
++    "display": "standalone",
++    "background_color": "#F7F4EF",
++    "theme_color": "#0E7A55",
++    "description": "Free and open-source calorie and nutrient tracker that respects your privacy.",
++    "orientation": "portrait-primary",
++    "prefer_related_applications": false,
++    "icons": [
++        {
++            "src": "icons/Icon-192.png",
++            "sizes": "192x192",
++            "type": "image/png"
++        },
++        {
++            "src": "icons/Icon-512.png",
++            "sizes": "512x512",
++            "type": "image/png"
++        },
++        {
++            "src": "icons/Icon-maskable-192.png",
++            "sizes": "192x192",
++            "type": "image/png",
++            "purpose": "maskable"
++        },
++        {
++            "src": "icons/Icon-maskable-512.png",
++            "sizes": "512x512",
++            "type": "image/png",
++            "purpose": "maskable"
++        }
++    ]
++}
+\ No newline at end of file
