@@ -217,7 +217,7 @@ export async function createLocalApi({ storage, seedText, fetchImpl = (...a) => 
   route('POST', '/log/quick', async ({ body }) => {
     const f = getFood(+body.food_id); if (!f) throw httpErr(404, 'Food not found');
     const grams = Number(body.grams) || f.serving_g;
-    return { id: await addLog({ date: body.date || todayStr(), meal: body.meal || 'snack', name: f.name, grams, ...scale(f, grams), food_id: f.id, source: 'search' }) };
+    return { id: await addLog({ date: body.date || todayStr(), meal: body.meal || 'snack', name: f.name, grams, ...scale(f, grams), food_id: f.id, source: 'search', details: body.portion ? { portion: String(body.portion).slice(0, 60) } : null }) };
   });
   route('GET', '/summary', async ({ query }) => {
     const to = query.to || todayStr(); const from = query.from || todayStr(new Date(Date.now() - 13 * 86400000));

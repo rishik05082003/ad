@@ -1,8 +1,8 @@
 // Offline shell: the app opens with no signal (logging, search and your data all work). Network first so updates
 // arrive as soon as you are online; the cache is only the fallback. OpenAI and Open Food Facts are never cached.
-const CACHE = 'leanmode-v1';
+const CACHE = 'leanmode-v2';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'local-api.js', 'local-storage.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
-  'core/analyze.js', 'core/chat.js', 'core/match.js', 'core/nutrition.js', 'core/off.js', 'core/recipes.js', 'core/schemas.js', 'core/seed.js', 'core/foods.txt'];
+  'core/analyze.js', 'core/chat.js', 'core/match.js', 'core/nutrition.js', 'core/off.js', 'core/recipes.js', 'core/schemas.js', 'core/seed.js', 'core/units.js', 'core/foods.txt'];
 
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

@@ -1,4 +1,5 @@
 // LeanMode front end. Vanilla JS, no build step.
+import { unitOf, parseAmount, fmtQty } from './core/units.js';
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const r0 = (n) => Math.round(Number(n) || 0);
@@ -145,7 +146,7 @@ function installHint() {
 function entryRow(e) {
   const th = e.thumb ? `<img src="${esc(e.thumb)}" alt="">` : (e.source === 'photo' ? '📷' : '🍽️');
   const ing = e.details?.ingredients?.length;
-  return `<button class="entry" data-act="entry" data-id="${e.id}"><div class="th">${th}</div><div class="grow"><div class="nm">${esc(e.name)}</div><div class="small mute">${r0(e.grams)} g · P${r0(e.protein)} C${r0(e.carbs)} F${r0(e.fat)}${ing ? ` · ${ing} ingredients` : ''}</div></div><div class="kc">${r0(e.kcal)}</div></button>`;
+  return `<button class="entry" data-act="entry" data-id="${e.id}"><div class="th">${th}</div><div class="grow"><div class="nm">${esc(e.name)}</div><div class="small mute">${e.details?.portion || r0(e.grams) + ' g'} · P${r0(e.protein)} C${r0(e.carbs)} F${r0(e.fat)}${ing ? ` · ${ing} ingredients` : ''}</div></div><div class="kc">${r0(e.kcal)}</div></button>`;
 }
 
 // ---------------------------------------------------------------- entry sheet
@@ -382,7 +383,7 @@ function searchSheet({ onConfirm, confirmLabel }) {
     <div class="chips" id="cats" style="margin-top:8px"></div>
     <div id="res"></div>
     <div id="online"></div>`);
-  let cat = '', mine = false, t;
+  let cat = '', mine = false, t, pending = null;
   const cats = ['all', 'mine', 'meal prep', 'packaged', 'indian', 'protein', 'fruit', 'vegetable', 'dairy', 'bread', 'drink', 'fastfood', 'dessert', 'snack'];
   const drawCats = () => { $('#cats', sh.el).innerHTML = cats.map((c) => `<button class="${(c === 'all' && !cat && !mine) || c === cat || (c === 'mine' && mine) ? 'on' : ''}" data-c="${c}">${c === 'mine' ? '⭐ My foods' : c}</button>`).join(''); sh.el.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => { mine = b.dataset.c === 'mine'; cat = ['all', 'mine'].includes(b.dataset.c) ? '' : b.dataset.c; drawCats(); go(); }); };
   const go = async () => {
@@ -395,14 +396,21 @@ function searchSheet({ onConfirm, confirmLabel }) {
         if (r.off) { const imp = await api('/off/import', { body: { product: r.off } }); toast('Found online and saved'); return showFood(imp.food); }
       } catch (e) { $('#res', sh.el).innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
     }
-    const list = await api(`/foods/search?q=${encodeURIComponent(q)}&category=${cat}&mine=${mine ? 1 : 0}&limit=40`);
-    $('#res', sh.el).innerHTML = list.length ? list.map(foodRow).join('') : `<div class="empty">No match in the database.</div>`;
+    let list = await api(`/foods/search?q=${encodeURIComponent(q)}&category=${cat}&mine=${mine ? 1 : 0}&limit=40`);
+    // "2 oreo", "half a roti", "150g rice": a leading amount is applied to whatever you pick (unless the whole text is a food name, like "5 star")
+    pending = null;
+    const pa = parseAmount(q);
+    if (pa) {
+      const whole = list.some((f) => [f.name, ...(f.aliases || '').split(',')].some((n) => n.trim().toLowerCase() === q.toLowerCase()));
+      if (!whole) { const l2 = await api(`/foods/search?q=${encodeURIComponent(pa.text)}&category=${cat}&mine=${mine ? 1 : 0}&limit=40`); if (l2.length) { list = l2; pending = pa; } }
+    }
+    $('#res', sh.el).innerHTML = (pending ? `<div class="small mute" style="margin:2px 0 8px">Amount from your search: <b style="color:var(--accent)">${pending.grams ? r0(pending.grams) + ' g' : fmtQty(pending.qty)}</b>. Tap the food to log it.</div>` : '') + (list.length ? list.map(foodRow).join('') : `<div class="empty">No match in the database.</div>`);
     sh.el.querySelectorAll('[data-fid]').forEach((b) => b.onclick = () => showFood(list.find((f) => f.id === +b.dataset.fid)));
     $('#online', sh.el).innerHTML = q.length > 1 ? `<button class="btn ghost" id="off" style="margin-top:6px">🌏 Search Open Food Facts (Australian products)</button><button class="btn ghost" id="barcode" style="margin-top:8px;display:${'BarcodeDetector' in window ? 'block' : 'none'}">📷 Scan barcode</button>` : ('BarcodeDetector' in window ? `<button class="btn ghost" id="barcode" style="margin-top:8px">📷 Scan barcode</button>` : '');
     $('#off', sh.el)?.addEventListener('click', () => online(q));
     $('#barcode', sh.el)?.addEventListener('click', scanBarcode);
   };
-  const showFood = (f) => amountSheet(f, { onConfirm, confirmLabel, afterLog: () => { if (!onConfirm) sh.close(); } });
+  const showFood = (f) => amountSheet(f, { onConfirm, confirmLabel, qty: pending?.qty, grams: pending?.grams, afterLog: () => { if (!onConfirm) sh.close(); } });
   const online = async (q) => {
     const box = $('#online', sh.el); box.innerHTML = '<div class="empty">Searching online…</div>';
     try {
@@ -430,27 +438,48 @@ function searchSheet({ onConfirm, confirmLabel }) {
 
 const foodRow = (f) => `<button class="entry" data-fid="${f.id}"><div class="th">${f.thumb ? `<img src="${esc(f.thumb)}">` : emoji(f.category)}</div><div class="grow"><div class="nm">${esc(f.brand ? f.brand + ' ' : '')}${esc(f.name)}</div><div class="small mute">${r0(f.kcal)} kcal/100g · ${esc(f.serving_label)} = ${r0((f.kcal * f.serving_g) / 100)} kcal${f.source !== 'seed' ? ' · ⭐ yours' : ''}</div></div></button>`;
 
-function amountSheet(food, { onConfirm, confirmLabel = 'Log', afterLog } = {}) {
+function amountSheet(food, { onConfirm, confirmLabel = 'Log', afterLog, qty, grams: grams0 } = {}) {
+  const u = unitOf(food); // natural unit (cookie, slice, roti…) when the serving label has one
   const sh = openSheet(`${food.brand ? food.brand + ' ' : ''}${food.name}`, '');
-  let grams = food.serving_g || 100, meal = defaultMeal();
-  const draw = () => {
+  let meal = defaultMeal();
+  let grams = grams0 ?? (u ? u.grams * (qty ?? 1) : (food.serving_g || 100));
+  const qNow = () => (u ? grams / u.grams : 0);
+  const portionText = () => (u ? `${fmtQty(qNow())} ${qNow() <= 1.005 ? u.one : u.many}` : `${r0(grams)} g`);
+  const paint = () => {
     const n = scaleN(food, grams / 100);
+    $('#kc', sh.el).textContent = r0(n.kcal);
+    $('#mc', sh.el).textContent = `P ${r1(n.protein)} · C ${r1(n.carbs)} · F ${r1(n.fat)} · fibre ${r1(n.fiber)} · sugar ${r1(n.sugar)}`;
+    $('#pt', sh.el).textContent = u ? `${portionText()} = ${r0(grams)} g` : '';
+  };
+  const sync = (src) => { if (src !== 'g') $('#g', sh.el).value = r1(grams); if (u && src !== 'q') $('#qty', sh.el).value = fmtQty(qNow()); };
+  const draw = () => {
+    const chips = u
+      ? [[0.5, '½'], [1, '1'], [2, '2'], [3, '3'], [5, '5']].map(([k, l]) => `<button data-m="${r1(u.grams * k)}">${l} ${k <= 1 ? esc(u.one) : esc(u.many)}</button>`).join('')
+        + (Math.abs(food.serving_g - u.grams) > 0.5 ? `<button data-m="${food.serving_g}">${esc(food.serving_label)}</button>` : '') + '<button data-m="100">100 g</button>'
+      : `<button data-m="${food.serving_g}">1 × ${esc(food.serving_label)}</button><button data-m="${food.serving_g * 2}">2 ×</button><button data-m="${food.serving_g / 2}">½ ×</button><button data-m="100">100 g</button><button data-m="50">50 g</button><button data-m="200">200 g</button>`;
     sh.set(`
-      <div class="card" style="margin-top:4px"><div class="spread"><div><div style="font-size:34px;font-weight:800">${r0(n.kcal)} <span class="small mute">kcal</span></div><div class="small mute">P ${r1(n.protein)} · C ${r1(n.carbs)} · F ${r1(n.fat)} · fibre ${r1(n.fiber)} · sugar ${r1(n.sugar)}</div></div>${food.thumb ? `<img src="${esc(food.thumb)}" style="height:60px;border-radius:12px">` : `<span style="font-size:40px">${emoji(food.category)}</span>`}</div></div>
+      <div class="card" style="margin-top:4px"><div class="spread"><div><div style="font-size:34px;font-weight:800"><span id="kc"></span> <span class="small mute">kcal</span></div><div class="small mute" id="mc"></div><div class="small" id="pt" style="margin-top:4px;color:var(--accent)"></div></div>${food.thumb ? `<img src="${esc(food.thumb)}" style="height:60px;border-radius:12px">` : `<span style="font-size:40px">${emoji(food.category)}</span>`}</div></div>
       ${food.source === 'recipe' ? recipeSummary(food) : ''}
-      <label>Amount (g or ml)</label><input id="g" type="number" inputmode="decimal" value="${r1(grams)}">
-      <div class="chips" style="margin-top:8px"><button data-m="${food.serving_g}">1 × ${esc(food.serving_label)}</button><button data-m="${food.serving_g * 2}">2 ×</button><button data-m="${food.serving_g / 2}">½ ×</button><button data-m="100">100 g</button><button data-m="50">50 g</button><button data-m="200">200 g</button></div>
+      ${u ? `<label>How many ${esc(u.many)}?</label><div class="qty"><button class="step" data-q="-1" aria-label="less">−</button><input id="qty" type="number" inputmode="decimal" step="any"><button class="step" data-q="1" aria-label="more">+</button></div><div class="small mute" style="margin-top:4px">1 ${esc(u.one)} ≈ ${r1(u.grams)} g</div>` : ''}
+      <label>${u ? 'or enter grams' : 'Amount (g or ml)'}</label><input id="g" type="number" inputmode="decimal">
+      <div class="chips" style="margin-top:8px">${chips}</div>
       ${onConfirm ? '' : `<label>Meal</label><select id="m">${MEALS.map(([k, l]) => `<option value="${k}" ${k === meal ? 'selected' : ''}>${l}</option>`).join('')}</select>`}
       <button class="btn" id="ok" style="margin-top:16px">${esc(confirmLabel)}</button>
       ${food.source !== 'seed' ? `<div class="grid2" style="margin-top:10px"><button class="btn ghost" id="edit">${food.source === 'recipe' ? 'Edit recipe' : 'Edit food'}</button><button class="btn danger" id="rm">Delete food</button></div>` : '<div class="small mute" style="margin-top:12px">Built-in values are typical averages. Scan your own pack for exact numbers and it will take priority.</div>'}`);
-    $('#g', sh.el).oninput = (e) => { grams = Number(e.target.value) || 0; const n2 = scaleN(food, grams / 100); sh.el.querySelector('.card div div').firstChild.textContent = r0(n2.kcal) + ' '; };
-    sh.el.querySelectorAll('[data-m]').forEach((b) => b.onclick = () => { grams = Number(b.dataset.m); draw(); });
+    sync(); paint();
+    $('#g', sh.el).oninput = (e) => { grams = Number(e.target.value) || 0; sync('g'); paint(); };
+    $('#qty', sh.el)?.addEventListener('input', (e) => { grams = (Number(e.target.value) || 0) * u.grams; sync('q'); paint(); });
+    sh.el.querySelectorAll('[data-q]').forEach((b) => b.onclick = () => {
+      const q = qNow(), step = q % 1 ? 0.5 : 1;
+      grams = Math.max(0.5, Math.round((q + Number(b.dataset.q) * step) * 100) / 100) * u.grams; sync(); paint();
+    });
+    sh.el.querySelectorAll('[data-m]').forEach((b) => b.onclick = () => { grams = Number(b.dataset.m); sync(); paint(); });
     $('#m', sh.el)?.addEventListener('change', (e) => { meal = e.target.value; });
     $('#ok', sh.el).onclick = async () => {
       if (!(grams > 0)) return toast('Enter an amount');
       if (onConfirm) { onConfirm(food, grams); sh.close(); closeUpper(); return; }
-      await api('/log/quick', { body: { food_id: food.id, grams, meal, date: state.date } });
-      sh.close(); afterLog?.(); toast(`Logged ${r0(scaleN(food, grams / 100).kcal)} kcal`); await loadDay(); render();
+      await api('/log/quick', { body: { food_id: food.id, grams, meal, date: state.date, portion: portionText() } });
+      sh.close(); afterLog?.(); toast(`Logged ${portionText()}: ${r0(scaleN(food, grams / 100).kcal)} kcal`); await loadDay(); render();
     };
     $('#edit', sh.el)?.addEventListener('click', () => { sh.close(); if (food.source === 'recipe') editRecipe(food); else foodForm(food); });
     $('#rm', sh.el)?.addEventListener('click', async () => { if (confirm('Delete this food?')) { await api(`/foods/${food.id}`, { method: 'DELETE' }); sh.close(); toast('Deleted'); if (state.tab === 'foods') renderFoods(); } });

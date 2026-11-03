@@ -140,7 +140,7 @@ route('POST', '/api/log/quick', async ({ body }) => {
   const f = store.getFood(+body.food_id);
   if (!f) throw new HttpError(404, 'Food not found');
   const grams = Number(body.grams) || f.serving_g;
-  const id = store.addLog({ date: body.date || todayStr(), meal: body.meal || 'snack', name: f.name, grams, ...scale(f, grams), food_id: f.id, source: 'search' });
+  const id = store.addLog({ date: body.date || todayStr(), meal: body.meal || 'snack', name: f.name, grams, ...scale(f, grams), food_id: f.id, source: 'search', details: body.portion ? { portion: String(body.portion).slice(0, 60) } : null });
   return { id };
 });
 route('GET', '/api/summary', async ({ query }) => {

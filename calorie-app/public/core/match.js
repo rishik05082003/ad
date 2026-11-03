@@ -109,6 +109,8 @@ export function scoreFood(query, food) {
     if (s > best) best = s;
   }
   if (best > 0) {
+    // people log food as eaten: prefer cooked over raw/dry unless they said raw/dry
+    if (/\((raw|dry|uncooked)/i.test(food.name) && !qt.some((t) => ['raw', 'dry', 'uncooked'].includes(t))) best -= 0.04;
     if (food.source && food.source !== 'seed') best += 0.05; // the user's own products win ties
     best += Math.min(0.03, Math.log10(1 + (food.use_count || 0)) * 0.02);
   }

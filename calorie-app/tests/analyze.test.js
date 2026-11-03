@@ -22,6 +22,10 @@ test('matcher: exact, alias, typo, method words', () => {
   assert.equal(top('fried egg'), 'Egg (fried)');
   assert.equal(top('daal'), 'Dal (cooked)');
   assert.equal(top('banana'), 'Banana');
+  assert.equal(top('white rice'), 'White rice (cooked)');   // as eaten beats raw
+  assert.equal(top('chicken breast'), 'Chicken breast (cooked)');
+  assert.equal(top('white rice raw'), 'White rice (raw)');
+  assert.equal(top('oreo double stuff'), 'Oreo Double Stuff');
   assert.ok(nameSimilarity('white rice, cooked', 'cooked white rice') > 0.9);
   assert.ok(nameSimilarity('dal tadka', 'white rice') < 0.3);
 });

@@ -279,7 +279,10 @@ Mixed nuts;trail mix,dry fruits;607;20;21;54;7;4;5;30;1 handful;nuts
 Roasted chana;bhuna chana,roasted chickpeas;364;19;61;5;17;8;60;30;1 handful;snack
 
 # ---------- SNACKS, BISCUITS, PACKAGED (typical values, scan your own label for exact) ----------
-Oreo;oreo cookies,oreo biscuit,oreo cookie,chocolate sandwich cookies;471;4.7;69;20;2.9;38;412;34;3 cookies;packaged
+Oreo;oreo cookies,oreo biscuit,oreo cookie,chocolate sandwich cookies,oreo original;471;4.7;69;20;2.9;38;412;11.3;1 cookie;packaged
+Oreo Double Stuff;oreo double stuff,double stuff oreo,oreo double stuf,oreo double stuffed,double stuf;480;4;68;21.5;2;42;390;14.5;1 cookie;packaged
+Oreo Golden;oreo golden,golden oreo,vanilla oreo;470;4;70;19.5;1.5;38;330;11.3;1 cookie;packaged
+Oreo Thins;oreo thin,thin oreo;485;4.5;69;21;2;34;400;7;1 biscuit;packaged
 Digestive biscuit;mcvitie's digestive,digestives;485;7;66;21;3.5;17;550;30;2 biscuits;packaged
 Parle-G;parle g,parle g biscuit,glucose biscuit;456;6.7;76;13.5;0.8;23;330;28;5 biscuits;packaged
 Marie biscuit;marie gold,marie;430;8;75;10.5;2.5;20;380;25;4 biscuits;packaged
