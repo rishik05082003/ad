@@ -2,13 +2,13 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import * as store from './db.js';
-import { searchFoods } from './match.js';
-import { analyzeMeal, analyzeLabel, parseRecipe } from './analyze.js';
+import { searchFoods } from '../public/core/match.js';
+import { analyzeMeal, analyzeLabel, parseRecipe } from '../public/core/analyze.js';
 import { saveRecipe, computeRecipe } from './recipes.js';
 import { saveProduct, offBarcode, offSearch } from './products.js';
 import { getApiKey, keySource, setApiKey, getModel, setModel } from './config.js';
-import { AIError } from './openai.js';
-import { scale, todayStr, NUTRIENTS } from './nutrition.js';
+import { AIError, chatJSON } from './openai.js';
+import { scale, todayStr, NUTRIENTS } from '../public/core/nutrition.js';
 
 const PUBLIC = path.resolve(import.meta.dirname, '..', 'public');
 const PORT = Number(process.env.PORT || 3000);
@@ -93,12 +93,12 @@ route('POST', '/api/analyze/meal', async ({ body }) => {
   const passes = Number(store.getSetting('ai_passes', 2));
   const answers = cleanAnswers(body.answers);
   store.saveHabits(answers); // remembered for next time
-  return analyzeMeal({ images, hint: String(body.hint || '').slice(0, 500), passes, answers, habits: store.listHabits() }, { foods: store.allFoods(), saved: store.savedProducts(60) });
+  return analyzeMeal({ images, hint: String(body.hint || '').slice(0, 500), passes, answers, habits: store.listHabits() }, { chat: chatJSON, foods: store.allFoods(), saved: store.savedProducts(60) });
 });
 route('POST', '/api/recipes/parse', async ({ body }) => {
   const answers = cleanAnswers(body.answers);
   store.saveHabits(answers);
-  return parseRecipe({ text: String(body.text || '').slice(0, 4000), answers, habits: store.listHabits() }, { foods: store.allFoods() });
+  return parseRecipe({ text: String(body.text || '').slice(0, 4000), answers, habits: store.listHabits() }, { chat: chatJSON, foods: store.allFoods() });
 });
 route('POST', '/api/recipes/compute', async ({ body }) => computeRecipe(body));
 route('POST', '/api/recipes', async ({ body }) => { const r = saveRecipe(body); return { food: toFood(r.food), computed: r.computed }; });
@@ -106,7 +106,7 @@ route('GET', '/api/habits', async () => store.listHabits(60));
 route('DELETE', '/api/habits', async () => { store.deleteHabits(); return { ok: true }; });
 route('POST', '/api/analyze/label', async ({ body }) => {
   const images = cleanImages(body.images);
-  const r = await analyzeLabel({ images, hint: String(body.hint || '').slice(0, 300) });
+  const r = await analyzeLabel({ images, hint: String(body.hint || '').slice(0, 300) }, { chat: chatJSON });
   if (r.ok && body.save !== false) {
     const { food, created } = saveProduct(r.product, { thumb: String(body.thumb || ''), source: 'label' });
     r.food = toFood(food); r.created = created;

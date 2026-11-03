@@ -1,5 +1,5 @@
 # local data: database, uploaded thumbnails and the saved API key live here
-data/
+/data/
 .env
 *.db
 *.db-wal

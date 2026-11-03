@@ -2,20 +2,35 @@
 
 A calorie-deficit tracker with AI food photos, label scanning and a built-in food database (about 530 foods, with Indian staples and a big Australian / Coles section). No npm install, no build step. It only needs Node 22.5 or newer.
 
+## Run it on your phone only (no computer, works anytime)
+
+The app is a static web app that runs entirely in your phone's browser. Your diary, scanned products and recipes are stored on the phone, and the OpenAI key is stored there too and sent straight from the phone to OpenAI. There is no server.
+
+1. Host the files for free on GitHub Pages. In this repo go to **Settings, Pages**, choose **Deploy from a branch**, pick the branch (this branch, or `main` after merging) and the `/ (root)` folder, then Save.
+2. After a minute, open `https://<your-github-username>.github.io/ad/calorie-app/public/` on your phone.
+3. **Install it:** iPhone Safari, tap Share then Add to Home Screen. Android Chrome, menu then Install app. Installed copies open full screen, work offline, and are protected from the browser clearing your data.
+4. Open **Settings**, paste your OpenAI key once, done.
+
+The page is public but contains no keys and no data. Each phone keeps its own data. Use **Settings, Backup** now and then (and before changing phones). The browser can wipe site data if the app is not installed.
+
+Camera barcode scanning needs Chrome on Android (Safari has no barcode API). On iPhone type the number or scan the label with the camera instead.
+
+## Run it on a computer instead (optional)
+
 ```bash
 cd calorie-app
 npm start        # then open http://localhost:3000
 ```
 
-On your phone, open it over your home Wi-Fi with `HOST=0.0.0.0 npm start` and browse to `http://<your-computer-ip>:3000`. Only do that on a network you trust, because there is no login.
+With a server running, the app uses it and stores data in `data/leanmode.db`. Use `HOST=0.0.0.0 npm start` to reach it from a phone on the same Wi-Fi (no login, so only on a network you trust).
 
 ## Your OpenAI key (enter once)
 
-Open **Settings** and paste it in the OpenAI box. The server stores it in `data/secrets.json` (chmod 600, git-ignored) and never sends it to the browser, so you never type it again. Alternatives: `OPENAI_API_KEY` env var, or a `.env` file (see `.env.example`). The key is not in the repo and should never be committed.
+Open **Settings** and paste it in the OpenAI box. In phone mode it is stored on the phone only. In server mode the server keeps it in `data/secrets.json` (chmod 600, git-ignored) and never sends it to the browser. You only type it once. Server-mode alternatives: `OPENAI_API_KEY` env var, or a `.env` file (see `.env.example`). The key is not in the repo and should never be committed.
 
 ## How the photo analysis works
 
-`server/analyze.js` is the algorithm, in four stages:
+`public/core/analyze.js` is the algorithm, in four stages:
 
 1. **Vision.** 2 passes by default, each using a different strategy (plate-fraction, bottom-up volume, conservative audit). Each pass names every food and drink, uses scale references (plate, fork, katori) to estimate edible grams, splits dishes into ingredients including hidden oil, ghee, cream and sugar, and gives a confidence. Your note ("ate half", "about 150 g rice") overrides the visual guess.
 2. **Grounding.** Every item and ingredient is matched against the database with a fuzzy matcher (aliases, typos, cooking methods). Your own saved products win ties. Database numbers beat the model's numbers. A sanity check rejects matches that contradict what was seen, and with no match the model's estimate is used and flagged.
@@ -35,7 +50,7 @@ Photograph the back of a pack. The nutrition table is transcribed, normalised to
 
 ## Notes
 
-- Seed values are typical averages (`server/data/foods.txt`, 12 columns, per 100 g). Packaged and restaurant items vary, so your own label scans always take priority. Edit the file to add foods and restart.
+- Seed values are typical averages (`public/core/foods.txt`, 12 columns, per 100 g). Packaged and restaurant items vary, so your own label scans always take priority. Edit the file to add foods and restart.
 - Your data lives in `data/leanmode.db` (SQLite, git-ignored). Back that folder up.
 - `npm test` runs matcher, grounding, label and data-integrity tests. `npm run dev:mock` runs with canned AI answers, with no key needed.
 - The deficit calculator uses Mifflin-St Jeor and enforces a minimum intake. It is an estimate, not medical advice.

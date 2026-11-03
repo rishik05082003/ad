@@ -19,7 +19,9 @@ function niceDate(s) {
 }
 function defaultMeal() { const h = new Date().getHours(); return h < 11 ? 'breakfast' : h < 15 ? 'lunch' : h < 18 ? 'snack' : 'dinner'; }
 
+let localApi = null; // set when there is no server: the app then runs entirely on the phone (see local-api.js)
 async function api(path, opts = {}) {
+  if (localApi) return localApi(path, opts);
   const res = await fetch('/api' + path, { method: opts.method || (opts.body ? 'POST' : 'GET'), headers: { 'Content-Type': 'application/json' }, body: opts.body ? JSON.stringify(opts.body) : undefined });
   let j = null;
   try { j = await res.json(); } catch { /* */ }
@@ -129,7 +131,15 @@ function renderToday() {
     </div></div>
   <div class="card" style="margin-top:0">${macroBar('Protein', t.protein, g.protein, 'var(--p)')}${macroBar('Carbs', t.carbs, g.carbs, 'var(--c)')}${macroBar('Fat', t.fat, g.fat, 'var(--f)')}
     <div class="small mute" style="margin-top:10px">Fibre ${r0(t.fiber)} g · Sugar ${r0(t.sugar)} g · Sodium ${r0(t.sodium)} mg</div></div>
-  ${banner}${byMeal}`;
+  ${installHint()}${banner}${byMeal}`;
+}
+
+function installHint() {
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  let dismissed = false; try { dismissed = localStorage.getItem('lm_install_dismissed') === '1'; } catch { /* */ }
+  if (!state.ai.local || standalone || dismissed) return '';
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return `<div class="banner info small"><div class="spread"><div><b>Install it like an app.</b> ${ios ? 'Tap the Share button, then <b>Add to Home Screen</b>.' : 'Open the browser menu (⋮), then <b>Install app</b> or <b>Add to Home screen</b>.'} Installed, it opens full screen, works offline and keeps your data safe from the browser clearing it.</div><button data-act="dismiss-install" style="font-size:18px">✕</button></div></div>`;
 }
 
 function entryRow(e) {
@@ -649,7 +659,7 @@ function renderSettings() {
   $('#view').innerHTML = `
   <h2>OpenAI (photo + label reading)</h2>
   <div class="card">
-    ${ai.mock ? '<div class="banner info small">Demo mode: canned AI answers. Start the server without CAL_MOCK_AI for the real thing.</div>' : ai.has_key ? `<div class="banner ok small">Key saved ✓ (from ${esc(ai.key_source)}). You never have to type it again.</div>` : '<div class="banner warn small">No key yet. Paste it once below, it is stored on this machine only.</div>'}
+    ${ai.mock ? '<div class="banner info small">Demo mode: canned AI answers. Start the server without CAL_MOCK_AI for the real thing.</div>' : ai.has_key ? `<div class="banner ok small">Key saved ✓ (${ai.key_source === 'phone' ? 'stored on this phone only' : 'from ' + esc(ai.key_source)}). You never have to type it again.</div>` : '<div class="banner warn small">No key yet. Paste it once below, it is stored on this machine only.</div>'}
     <label>API key</label><input id="key" type="password" autocomplete="off" placeholder="${ai.has_key ? '•••••••••••• (leave blank to keep)' : 'sk-…'}">
     <label>Vision model</label><input id="model" value="${esc(ai.model)}">
     <label>Analysis passes (more = steadier estimates, costs more)</label><select id="passes">${[1, 2, 3].map((n) => `<option value="${n}" ${(+s.ai_passes || 2) === n ? 'selected' : ''}>${n} ${n === 2 ? '(recommended)' : ''}</option>`).join('')}</select>
@@ -669,7 +679,8 @@ function renderSettings() {
   <h2>Or set targets by hand</h2>
   <div class="card"><div class="grid2"><div><label>Calories</label><input id="gk" type="number" value="${esc(s.goal_kcal || '')}"></div><div><label>Protein g</label><input id="gp" type="number" value="${esc(s.goal_protein || '')}"></div><div><label>Carbs g</label><input id="gc" type="number" value="${esc(s.goal_carbs || '')}"></div><div><label>Fat g</label><input id="gf" type="number" value="${esc(s.goal_fat || '')}"></div></div><button class="btn ghost" id="savegoal" style="margin-top:12px">Save targets</button></div>
   <h2>What I remember about how you cook</h2>
-  <div class="card"><div id="habits" class="small mute">Loading…</div></div>`;
+  <div class="card"><div id="habits" class="small mute">Loading…</div></div>
+  ${ai.local ? `<h2>Backup</h2><div class="card"><div class="small mute">Everything (diary, scanned products, recipes, weights, habits) lives on this phone. Your OpenAI key is never included. Save a backup file now and then, especially before switching phones.</div><div class="grid2" style="margin-top:12px"><button class="btn ghost" id="bk">Download backup</button><button class="btn ghost" id="rs">Restore backup</button></div></div>` : ''}`;
   const prof = () => ({ sex: $('#sex').value, age: $('#age').value, height_cm: $('#h').value, weight_kg: $('#w').value, activity: $('#act').value, weekly_loss_kg: $('#loss').value });
   const showPlan = () => { const p = calcPlan(prof()); $('#plan').innerHTML = p ? `<div class="banner ok" style="margin-top:12px">Maintenance <b>${p.tdee}</b> kcal → eat <b>${p.target}</b> kcal/day<br><span class="small">Protein ${p.protein} g · Carbs ${p.carbs} g · Fat ${p.fat} g${p.floored ? '<br>Held at a safe minimum, so your real loss rate will be slower.' : ''}</span></div>` : '<div class="small mute" style="margin-top:10px">Fill in age, height and weight.</div>'; };
   ['sex', 'age', 'h', 'w', 'act', 'loss'].forEach((id) => $('#' + id).addEventListener('input', showPlan)); showPlan();
@@ -682,6 +693,25 @@ function renderSettings() {
       toast('AI settings saved'); await loadSettings(); render();
     } catch (e) { toast(e.message); }
   };
+  $('#bk')?.addEventListener('click', async () => {
+    const data = await api('/backup');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    a.download = `leanmode-backup-${today()}.json`; document.body.appendChild(a); a.click(); a.remove();
+    toast('Backup saved to your downloads');
+  });
+  $('#rs')?.addEventListener('click', () => {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json,.json';
+    inp.onchange = async () => {
+      try {
+        const data = JSON.parse(await inp.files[0].text());
+        if (!confirm('Replace everything on this phone with the backup?')) return;
+        const r = await api('/restore', { body: { data } });
+        toast(`Restored ${r.entries} entries and ${r.foods} foods`); await refresh();
+      } catch (e) { toast(e.message || 'Could not read that file'); }
+    };
+    inp.click();
+  });
   api('/habits').then((h) => {
     const box = $('#habits'); if (!box) return;
     box.innerHTML = h.length ? `<div class="ing" style="border:0;margin:0;padding:0">${h.map((x) => `<div><span>${x.item ? `<b>${esc(x.item)}</b>: ` : ''}${esc(x.question)}</span><span style="color:var(--text)">${esc(x.answer)}</span></div>`).join('')}</div><button class="btn danger sm" id="clrh" style="margin-top:12px">Forget these</button><div style="margin-top:8px">The AI uses these as defaults when it analyses photos, and only asks again when something looks different.</div>` : 'Nothing yet. When the AI asks a question (like how much oil) and you answer, it is remembered here.';
@@ -698,10 +728,24 @@ document.addEventListener('click', (e) => {
   else if (a === 'add') addMenu();
   else if (a === 'day') { const n = addDays(state.date, +b.dataset.d); if (n <= today()) { state.date = n; loadDay().then(render); } }
   else if (a === 'entry') entrySheet(+b.dataset.id);
+  else if (a === 'dismiss-install') { try { localStorage.setItem('lm_install_dismissed', '1'); } catch { /* */ } render(); }
 });
+
+async function initBackend() {
+  try { // a LeanMode server on the same address? use it. Otherwise run fully on this phone.
+    const r = await fetch('api/status', { cache: 'no-store' });
+    if (r.ok && (r.headers.get('content-type') || '').includes('json')) return;
+  } catch { /* no server */ }
+  const [{ createLocalApi }, { idbStorage }] = await Promise.all([import('./local-api.js'), import('./local-storage.js')]);
+  const seedText = await (await fetch(new URL('./core/foods.txt', import.meta.url))).text();
+  localApi = await createLocalApi({ storage: idbStorage(), seedText });
+  navigator.storage?.persist?.().catch(() => {}); // ask the browser not to evict our data
+}
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 (async () => {
   try {
+    await initBackend();
     const st = await api('/status'); state.foodCount = st.foods;
     await refresh();
   } catch (e) { $('#view').innerHTML = `<div class="banner bad">Cannot reach the server: ${esc(e.message)}</div>`; }

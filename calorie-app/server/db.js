@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { DATA_DIR } from './config.js';
-import { NUTRIENTS } from './nutrition.js';
+import { NUTRIENTS } from '../public/core/nutrition.js';
 
 const DB_PATH = process.env.CAL_DB || path.join(DATA_DIR, 'leanmode.db');
 export const db = new DatabaseSync(DB_PATH);

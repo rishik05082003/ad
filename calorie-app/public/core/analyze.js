@@ -10,7 +10,7 @@
 //  4. MATH        nutrition = per-100g x grams, summed per dish and per meal.
 //
 // Weights always come from vision + your hint. Calories never do: they come from data.
-import { chatJSON, imageParts } from './openai.js';
+import { imageParts } from './chat.js';
 import { MEAL_SCHEMA, LABEL_SCHEMA, RECIPE_SCHEMA } from './schemas.js';
 import { matchFoods, nameSimilarity } from './match.js';
 import { scale, sum, reconcile, num, round1, NUTRIENTS } from './nutrition.js';
@@ -255,7 +255,7 @@ export const cleanQuestions = (lists) => {
 };
 
 export async function analyzeMeal({ images, hint = '', passes = 2, answers = [], habits = [] }, deps) {
-  const { chat = chatJSON, foods, saved = [] } = deps;
+  const { chat, foods, saved = [] } = deps;
   if (!images?.length) throw Object.assign(new Error('Add at least one photo.'), { status: 400 });
   const n = Math.max(1, Math.min(3, Math.round(passes) || 1));
   const byId = new Map(foods.map((f) => [f.id, f]));
@@ -330,7 +330,7 @@ export function normalizeLabel(raw) {
 }
 
 export async function analyzeLabel({ images, hint = '' }, deps = {}) {
-  const { chat = chatJSON } = deps;
+  const { chat } = deps;
   if (!images?.length) throw Object.assign(new Error('Add at least one photo.'), { status: 400 });
   const raw = await chat({
     system: SYSTEM_LABEL,
@@ -351,7 +351,7 @@ const SYSTEM_RECIPE = `You turn a home cook's description of a batch recipe into
 Return only JSON matching the schema.`;
 
 export async function parseRecipe({ text, answers = [], habits = [] }, deps) {
-  const { chat = chatJSON, foods } = deps;
+  const { chat, foods } = deps;
   if (!String(text || '').trim()) throw Object.assign(new Error('Describe what you cooked first.'), { status: 400 });
   const raw = await chat({
     system: SYSTEM_RECIPE,

@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseSeed, SEED_FILE } from '../server/seed.js';
-import { atwater } from '../server/nutrition.js';
+import { parseSeed } from '../public/core/seed.js';
+import { SEED_FILE } from '../server/seed.js';
+import { atwater } from '../public/core/nutrition.js';
 
 const rows = parseSeed(fs.readFileSync(SEED_FILE, 'utf8'));
 

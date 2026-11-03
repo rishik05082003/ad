@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseSeed, SEED_FILE } from '../server/seed.js';
-import { analyzeMeal, normalizeLabel, ground } from '../server/analyze.js';
-import { matchFoods, nameSimilarity } from '../server/match.js';
-import { reconcile, scale } from '../server/nutrition.js';
+import { parseSeed } from '../public/core/seed.js';
+import { SEED_FILE } from '../server/seed.js';
+import { analyzeMeal, normalizeLabel, ground } from '../public/core/analyze.js';
+import { matchFoods, nameSimilarity } from '../public/core/match.js';
+import { reconcile, scale } from '../public/core/nutrition.js';
 
 const foods = parseSeed(fs.readFileSync(SEED_FILE, 'utf8')).map((r, i) => ({ id: i + 1, source: 'seed', use_count: 0, brand: '', ...r }));
 const per = (kcal, protein = 0, carbs = 0, fat = 0) => ({ kcal, protein, carbs, fat, fiber: 0, sugar: 0, sodium_mg: 0 });

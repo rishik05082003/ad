@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseSeed, SEED_FILE } from '../server/seed.js';
-import { analyzeMeal, parseRecipe, memoryBlock, cleanQuestions } from '../server/analyze.js';
+import { parseSeed } from '../public/core/seed.js';
+import { SEED_FILE } from '../server/seed.js';
+import { analyzeMeal, parseRecipe, memoryBlock, cleanQuestions } from '../public/core/analyze.js';
 import { computeRecipe } from '../server/recipes.js';
 
 const foods = parseSeed(fs.readFileSync(SEED_FILE, 'utf8')).map((r, i) => ({ id: i + 1, source: 'seed', use_count: 0, brand: '', ...r }));

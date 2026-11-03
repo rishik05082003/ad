@@ -1,0 +1,596 @@
+# LeanMode seed food database. Values are per 100 g (or 100 ml for drinks) as typically eaten.
+# name;aliases (comma separated);kcal;protein;carbs;fat;fiber;sugar;sodium_mg;serving_g;serving_label;category
+# Numbers are rounded reference values (USDA / IFCT / typical label data). Packaged and restaurant items vary by brand,
+# so scan your own label for exact numbers: your scans always win over this list.
+
+# ---------- FRUIT ----------
+Apple;apples,seb;52;0.3;13.8;0.2;2.4;10.4;1;182;1 medium;fruit
+Banana;bananas,kela;89;1.1;22.8;0.3;2.6;12.2;1;118;1 medium;fruit
+Orange;oranges,santra,mandarin,kinnow;47;0.9;11.8;0.1;2.4;9.4;0;131;1 medium;fruit
+Mango;mangoes,aam;60;0.8;15;0.4;1.6;13.7;1;165;1 cup sliced;fruit
+Grapes;grape,angoor;69;0.7;18.1;0.2;0.9;15.5;2;150;1 cup;fruit
+Strawberries;strawberry;32;0.7;7.7;0.3;2;4.9;1;150;1 cup;fruit
+Blueberries;blueberry;57;0.7;14.5;0.3;2.4;10;1;148;1 cup;fruit
+Watermelon;tarbooz;30;0.6;7.6;0.2;0.4;6.2;1;150;1 cup diced;fruit
+Muskmelon;cantaloupe,kharbuja;34;0.8;8.2;0.2;0.9;7.9;16;160;1 cup;fruit
+Pineapple;ananas;50;0.5;13.1;0.1;1.4;9.9;1;165;1 cup chunks;fruit
+Papaya;papita;43;0.5;10.8;0.3;1.7;7.8;8;145;1 cup;fruit
+Pomegranate;anar,pomegranate seeds;83;1.7;18.7;1.2;4;13.7;3;87;1/2 cup arils;fruit
+Pear;nashpati;57;0.4;15.2;0.1;3.1;9.8;1;178;1 medium;fruit
+Peach;aadu;39;0.9;9.5;0.3;1.5;8.4;0;150;1 medium;fruit
+Plum;aloo bukhara;46;0.7;11.4;0.3;1.4;9.9;0;66;1 plum;fruit
+Cherries;cherry;63;1.1;16;0.2;2.1;12.8;0;138;1 cup;fruit
+Kiwi;kiwifruit;61;1.1;14.7;0.5;3;9;3;69;1 medium;fruit
+Guava;amrud;68;2.6;14.3;1;5.4;8.9;2;55;1 fruit;fruit
+Custard apple;sitaphal,sharifa;94;2.1;23.6;0.3;4.4;19.9;9;100;1 fruit;fruit
+Lychee;litchi;66;0.8;16.5;0.4;1.3;15.2;1;100;10 fruits;fruit
+Dragon fruit;pitaya;60;1.2;13;0;3;8;0;200;1 fruit;fruit
+Fresh fig;anjeer fresh;74;0.8;19.2;0.3;2.9;16.3;1;50;1 fig;fruit
+Jackfruit;kathal;95;1.7;23.3;0.6;1.5;19.1;2;165;1 cup;fruit
+Sapota;chikoo,chickoo;83;0.4;20;1.1;5.3;14;12;170;1 fruit;fruit
+Avocado;;160;2;8.5;14.7;6.7;0.7;7;150;1 avocado;fruit
+Coconut (fresh);nariyal,coconut;354;3.3;15.2;33.5;9;6.2;20;45;1 piece;fruit
+Coconut water;nariyal pani,tender coconut water;19;0.7;3.7;0.2;1.1;2.6;105;240;1 glass;drink
+Lemon;nimbu;29;1.1;9.3;0.3;2.8;2.5;2;58;1 lemon;fruit
+Dates (medjool);dates,khajoor,date;277;1.8;75;0.2;6.7;66.5;1;24;1 date;fruit
+Raisins;kishmish;299;3.1;79.2;0.5;3.7;59.2;11;30;small handful;fruit
+Dried apricot;apricots dried;241;3.4;62.6;0.5;7.3;53.4;10;35;4 pieces;fruit
+Dried fig;anjeer;249;3.3;63.9;0.9;9.8;47.9;10;40;2 figs;fruit
+Prunes;dried plums;240;2.2;63.9;0.4;7.1;38;2;40;4 prunes;fruit
+
+# ---------- VEGETABLES ----------
+Potato (boiled);aloo boiled,boiled potato;87;1.9;20.1;0.1;1.8;0.9;4;150;1 medium;vegetable
+Potato (raw);aloo;77;2;17.5;0.1;2.2;0.8;6;170;1 medium;vegetable
+Sweet potato (baked);shakarkandi;90;2;20.7;0.2;3.3;6.5;36;130;1 medium;vegetable
+Tomato;tamatar;18;0.9;3.9;0.2;1.2;2.6;5;123;1 medium;vegetable
+Onion;pyaz,pyaaz;40;1.1;9.3;0.1;1.7;4.2;4;110;1 medium;vegetable
+Carrot;gajar;41;0.9;9.6;0.2;2.8;4.7;69;61;1 medium;vegetable
+Cucumber;kheera,kakdi;15;0.7;3.6;0.1;0.5;1.7;2;100;1/2 cucumber;vegetable
+Spinach (raw);palak;23;2.9;3.6;0.4;2.2;0.4;79;30;1 cup;vegetable
+Spinach (cooked);palak cooked;23;3;3.8;0.3;2.4;0.4;70;180;1 cup;vegetable
+Broccoli;;34;2.8;6.6;0.4;2.6;1.7;33;91;1 cup;vegetable
+Cauliflower;gobi,phool gobi;25;1.9;5;0.3;2;1.9;30;100;1 cup;vegetable
+Cabbage;patta gobi,band gobi;25;1.3;5.8;0.1;2.5;3.2;18;89;1 cup;vegetable
+Bell pepper;capsicum,shimla mirch;31;1;6;0.3;2.1;4.2;4;120;1 medium;vegetable
+Green peas;matar,peas;81;5.4;14.5;0.4;5.7;5.7;5;80;1/2 cup;vegetable
+Sweet corn;corn,bhutta,sweetcorn;86;3.2;19;1.2;2.7;6.3;15;90;1/2 cup;vegetable
+Mushrooms;button mushroom;22;3.1;3.3;0.3;1;2;5;70;1 cup;vegetable
+Brinjal;eggplant,baingan,aubergine;25;1;5.9;0.2;3;3.5;2;100;1 cup;vegetable
+Okra;bhindi,lady finger,ladyfinger;33;1.9;7.5;0.2;3.2;1.5;7;100;1 cup;vegetable
+Lettuce;salad leaves,iceberg;15;1.4;2.9;0.2;1.3;0.8;28;50;1 cup;vegetable
+Zucchini;courgette;17;1.2;3.1;0.3;1;2.5;8;120;1 cup;vegetable
+Green beans;french beans,beans;31;1.8;7;0.2;2.7;3.3;6;100;1 cup;vegetable
+Bottle gourd;lauki,doodhi;14;0.6;3.4;0;0.5;2.5;2;100;1 cup;vegetable
+Bitter gourd;karela;17;1;3.7;0.2;2.8;1;5;100;1 cup;vegetable
+Beetroot;chukandar;43;1.6;9.6;0.2;2.8;6.8;78;100;1 medium;vegetable
+Radish;mooli;16;0.7;3.4;0.1;1.6;1.9;39;100;1 cup;vegetable
+Pumpkin;kaddu;26;1;6.5;0.1;0.5;2.8;1;100;1 cup;vegetable
+Garlic;lahsun;149;6.4;33;0.5;2.1;1;17;3;1 clove;vegetable
+Ginger;adrak;80;1.8;17.8;0.8;2;1.7;13;5;1 tsp grated;vegetable
+Green chilli;hari mirch;40;2;9;0.2;1.5;5.1;7;5;1 chilli;vegetable
+Coriander leaves;dhania,cilantro,kothimbir;23;2.1;3.7;0.5;2.8;0.9;46;10;1/4 cup;vegetable
+Kale;;49;4.3;8.8;0.9;3.6;2.3;38;67;1 cup;vegetable
+Celery;;16;0.7;3;0.2;1.6;1.3;80;40;1 stalk;vegetable
+Asparagus;;20;2.2;3.9;0.1;2.1;1.9;2;134;1 cup;vegetable
+Drumstick (moringa);sahjan,murungakkai;37;2.1;8.5;0.2;3.2;3;42;100;1 cup;vegetable
+Cluster beans;gavar,guar;16;3.2;3.5;0.1;3.2;1;5;100;1 cup;vegetable
+Raw banana;kachha kela;89;1.1;22.8;0.3;2.6;12.2;4;100;1 banana;vegetable
+Yam;suran,jimikand;118;1.5;27.9;0.2;4.1;0.5;9;100;1 cup;vegetable
+Salad (mixed greens);green salad;20;1.5;3.5;0.2;1.7;2;25;100;1 bowl;vegetable
+Pickle (Indian achar);achar,pickle;190;1.5;9;17;3;2;2200;10;1 tsp;condiment
+
+# ---------- RICE, ROTI, BREAD, GRAINS ----------
+White rice (cooked);rice,steamed rice,chawal,plain rice;130;2.7;28.2;0.3;0.4;0;1;158;1 cup;grain
+Brown rice (cooked);;112;2.3;23.5;0.8;1.8;0.4;5;195;1 cup;grain
+Basmati rice (cooked);basmati,basmati chawal,basmati rice;121;3.5;25;0.4;0.4;0;1;158;1 cup;grain
+White rice (raw);uncooked rice;365;7.1;80;0.7;1.3;0.1;5;50;1/4 cup;grain
+Jeera rice;cumin rice;150;2.8;27;3.2;0.6;0.2;250;158;1 cup;indian
+Curd rice;dahi chawal,thayir sadam;118;3.2;19;3.2;0.4;1.5;180;200;1 bowl;indian
+Lemon rice;chitranna;160;3;27;4.5;1;0.5;280;180;1 cup;indian
+Vegetable pulao;veg pulao,pulav;150;3;24;4.5;1.4;1.5;300;180;1 cup;indian
+Khichdi;moong dal khichdi;120;4.5;19;2.8;1.8;0.5;240;250;1 bowl;indian
+Roti;chapati,phulka,wheat roti,fulka;260;9;46;3.7;7;1.5;330;40;1 roti;indian
+Roti with ghee;ghee chapati,buttered roti;320;8.5;44;11.5;6;1.5;300;45;1 roti;indian
+Paratha (plain);plain paratha;326;7.6;44;13;4;1.5;430;60;1 paratha;indian
+Aloo paratha;potato paratha;255;5.2;35;10.5;2.8;2;430;130;1 paratha;indian
+Paneer paratha;;285;9;33;13;2.5;1.5;420;130;1 paratha;indian
+Gobi paratha;;240;5.5;33;10;3;2;400;130;1 paratha;indian
+Naan;plain naan;290;9.1;50;5.9;2.2;3.5;480;90;1 naan;indian
+Butter naan;;320;8.5;48;10.5;2;3;500;100;1 naan;indian
+Garlic naan;;300;9;49;7.5;2.3;3;520;95;1 naan;indian
+Puri;poori;375;8;45;18;3;1;260;25;1 puri;indian
+Bhatura;bhature;330;7.5;44;13.5;2.2;3;400;80;1 bhatura;indian
+Thepla;methi thepla;290;8;42;10;5;3;450;40;1 thepla;indian
+Missi roti;;270;10;42;6;7;1.5;330;50;1 roti;indian
+Jowar roti;jowar bhakri,sorghum roti,bhakri;250;7.5;50;2.5;5;1;10;40;1 roti;indian
+Bajra roti;bajra bhakri,pearl millet roti;260;8;48;4.5;5;1;10;40;1 roti;indian
+Ragi roti;ragi mudde,finger millet roti;250;6;51;1.5;5;1;12;40;1 roti;indian
+Whole wheat bread;brown bread,atta bread;247;13;41;3.4;7;6;450;28;1 slice;bread
+White bread;bread slice,sandwich bread;265;9;49;3.2;2.7;5;491;25;1 slice;bread
+Multigrain bread;;250;11;43;4;6.5;5;440;30;1 slice;bread
+Pav;ladi pav,bread roll,bun;270;8;49;4;2.5;5;500;40;1 pav;bread
+Burger bun;hamburger bun;270;9;50;4;2.4;6;490;55;1 bun;bread
+Bagel;;257;10;50;1.6;2.1;6;430;105;1 bagel;bread
+Croissant;;406;8.2;45.8;21;2.6;11.3;400;57;1 croissant;bread
+Tortilla (flour);wrap bread,flour tortilla;312;8;51;8;3;2;700;45;1 tortilla;bread
+Toast with butter;buttered toast;330;8;42;14;2.5;4;550;35;1 slice;bread
+Oats (dry);rolled oats,oatmeal raw,quaker oats;379;13.2;67.7;6.5;10.1;1;6;40;1/2 cup;grain
+Oatmeal (cooked);porridge,oats cooked,oats porridge;71;2.5;12;1.5;1.7;0.3;49;234;1 cup;grain
+Pasta (cooked);spaghetti,penne,macaroni,noodles pasta;158;5.8;30.9;0.9;1.8;0.6;1;140;1 cup;grain
+Pasta (dry);raw pasta;371;13;75;1.5;3.2;2.7;6;75;serving;grain
+Quinoa (cooked);;120;4.4;21.3;1.9;2.8;0.9;7;185;1 cup;grain
+Couscous (cooked);;112;3.8;23.2;0.2;1.4;0.1;5;157;1 cup;grain
+Cornflakes;corn flakes,kelloggs cornflakes;357;7.5;84;0.4;3.3;10;729;30;1 cup;cereal
+Muesli;granola;380;9;66;8;7;18;80;45;1/2 cup;cereal
+Chocos;choco cereal,kelloggs chocos;385;6.5;82;3.5;3;32;400;30;1 cup;cereal
+Poha;flattened rice cooked,kanda poha;130;2.6;25;2.2;1.5;1;300;150;1 plate;indian
+Upma;rava upma,suji upma;120;3;19;3.5;1.5;1;330;200;1 bowl;indian
+Idli;idly;146;4;30;0.5;1.2;0.5;300;40;1 idli;indian
+Dosa (plain);sada dosa,plain dosa;168;3.9;29;3.7;1.5;0.5;260;85;1 dosa;indian
+Masala dosa;;185;4.2;27;6.8;2.2;1.5;350;180;1 dosa with filling;indian
+Rava dosa;;190;4;30;6;1.5;0.5;320;90;1 dosa;indian
+Uttapam;utthapam;170;4.5;27;5;2;1;280;120;1 uttapam;indian
+Medu vada;vada,ulundu vadai;290;9;28;16;3;1;400;45;1 vada;indian
+Sambar;sambhar;50;2.6;7.5;1.2;2;2.5;300;150;1 katori;indian
+Coconut chutney;nariyal chutney;180;2;7;16;4;2;200;30;2 tbsp;condiment
+Pesarattu;moong dosa;170;7.5;24;4.5;3.5;1;280;100;1 dosa;indian
+Appam;;150;2.8;30;1.8;1;3;180;80;1 appam;indian
+Puttu;;160;3.2;32;1.8;2.2;0.5;100;150;1 cup;indian
+Dhokla;khaman dhokla;160;6;25;4;2.5;5;520;60;2 pieces;indian
+Khakhra;plain khakhra;380;12;55;12;8;2;700;15;1 khakhra;indian
+
+# ---------- EGGS, MEAT, FISH, PROTEIN ----------
+Egg (boiled);hard boiled egg,boiled egg,anda,egg boiled;155;12.6;1.1;10.6;0;1.1;124;50;1 large egg;protein
+Egg (fried);fried egg,sunny side up,omelette fried egg;196;13.6;0.8;14.8;0;0.4;207;46;1 large egg;protein
+Egg white;egg whites;52;10.9;0.7;0.2;0;0.7;166;33;1 egg white;protein
+Egg yolk;;322;15.9;3.6;26.5;0;0.6;48;17;1 yolk;protein
+Omelette;masala omelette,egg omelette,omelet;154;10.6;0.6;11.7;0;0.6;155;60;1 egg omelette;protein
+Scrambled eggs;egg bhurji,anda bhurji,scrambled egg;149;10;1.6;11;0.1;1.4;170;100;2 eggs;protein
+Chicken breast (cooked);grilled chicken breast,boiled chicken,chicken breast;165;31;0;3.6;0;0;74;120;1 small breast;protein
+Chicken breast (raw);raw chicken breast;120;22.5;0;2.6;0;0;45;150;1 breast;protein
+Chicken thigh (cooked);chicken leg,chicken thigh skinless;209;26;0;10.9;0;0;95;100;1 thigh;protein
+Chicken (fried);fried chicken,kfc chicken;280;19;11;17;0.5;0;640;100;1 piece;fastfood
+Chicken tikka;tikka;150;22;3.5;5;0.5;1.5;450;100;5 pieces;indian
+Tandoori chicken;;150;21;4;5.5;0.5;1.5;480;150;1 leg;indian
+Chicken curry;chicken masala,chicken gravy;140;12;5;8;1;2;380;200;1 bowl;indian
+Butter chicken;murgh makhani;150;11;6;9;0.8;3.5;420;200;1 bowl;indian
+Chicken biryani;biryani chicken;175;9;21;6;1;1.2;350;250;1 plate;indian
+Mutton biryani;lamb biryani;190;9.5;21;7.5;1;1;360;250;1 plate;indian
+Veg biryani;vegetable biryani;150;3.5;24;4.5;1.5;1.5;340;250;1 plate;indian
+Egg curry;anda curry;130;7;5;9;1;2;350;200;1 bowl;indian
+Mutton curry;goat curry,lamb curry,rogan josh;190;15;4;12;1;2;400;200;1 bowl;indian
+Keema;mutton keema,minced mutton;210;18;3;14;1;1;380;150;1 bowl;indian
+Fish curry;machli curry,fish masala;120;12;4;6;0.8;1.5;380;200;1 bowl;indian
+Fish fry;fried fish,tawa fish;230;20;8;13;0.5;0.5;420;100;1 fillet;indian
+Salmon (cooked);grilled salmon,salmon fillet;206;22;0;12.4;0;0;61;150;1 fillet;protein
+Tuna (canned in water);canned tuna,tuna;116;25.5;0;0.8;0;0;247;100;1 can drained;protein
+Shrimp (cooked);prawns,prawn,shrimps;99;24;0.2;0.3;0;0;111;100;6 large;protein
+Prawn curry;shrimp curry;130;13;5;6.5;1;1.5;400;200;1 bowl;indian
+Beef steak (cooked);steak,sirloin steak;271;25;0;19;0;0;60;150;1 steak;protein
+Ground beef (cooked);minced beef,beef mince;250;26;0;15;0;0;75;100;1 patty;protein
+Pork chop (cooked);pork;231;26;0;14;0;0;62;120;1 chop;protein
+Bacon (cooked);bacon strips,bacon slice;541;37;1.4;42;0;0;1717;8;1 slice;protein
+Ham;;145;21;1.5;5.5;0;1;1203;56;2 slices;protein
+Sausage (pork);sausages;301;12;2;27;0;1;800;50;1 sausage;protein
+Chicken sausage;;180;16;3;11;0;1;720;50;1 sausage;protein
+Paneer;cottage cheese indian,raw paneer;265;18.3;1.2;20.8;0;0;22;100;100 g block;protein
+Low fat paneer;;180;20;3;10;0;1;25;100;100 g block;protein
+Tofu (firm);bean curd;76;8;1.9;4.8;0.3;0.6;7;100;100 g;protein
+Tempeh;;193;20.3;7.6;10.8;0;0;9;100;100 g;protein
+Soya chunks (dry);soy chunks,nutrela,meal maker;345;52;33;0.5;13;0;20;30;1/4 cup dry;protein
+Soya chunks (cooked);soy chunks cooked;120;18;11;0.2;4.5;0;10;100;1/2 cup;protein
+Whey protein;whey protein powder,protein powder,whey scoop,whey;400;80;8;6;0;5;200;30;1 scoop;supplement
+Protein bar;protein bar generic;370;30;35;12;6;8;250;60;1 bar;supplement
+Creatine;;0;0;0;0;0;0;0;5;1 scoop;supplement
+Peanut butter;pb,peanutbutter;588;25;20;50;6;9;426;32;2 tbsp;spread
+Almond butter;;614;21;19;56;10;4;7;32;2 tbsp;spread
+
+# ---------- LEGUMES, DAL, CURRIES ----------
+Dal (cooked);dal,daal,dhal,lentil curry,plain dal,dal tadka plain;105;6.5;16.5;1.8;3.5;1.5;250;150;1 katori;indian
+Dal tadka;dal fry,tadka dal;120;6;15;4;3.5;1.5;350;150;1 katori;indian
+Dal makhani;maa ki dal,black dal;150;6.5;15;7.5;4;1.5;380;150;1 katori;indian
+Moong dal (cooked);yellow moong dal,mung dal;105;7;19;0.4;7.6;2;2;150;1 katori;indian
+Toor dal (cooked);arhar dal,tur dal;116;6.8;20;0.5;5;1.5;5;150;1 katori;indian
+Masoor dal (cooked);red lentils;116;9;20;0.4;7.9;1.8;2;150;1 katori;indian
+Chana dal (cooked);;164;9;27;2.7;7.6;4.8;7;150;1 katori;indian
+Chickpeas (boiled);chana boiled,kabuli chana,garbanzo;164;8.9;27.4;2.6;7.6;4.8;7;164;1 cup;legume
+Chole;chana masala,chhole,chickpea curry;150;6;19;5.5;5;3;380;150;1 katori;indian
+Rajma (boiled);kidney beans;127;8.7;22.8;0.5;6.4;0.3;1;177;1 cup;legume
+Rajma curry;rajma masala;120;5.5;15;4.5;4.5;2;350;150;1 katori;indian
+Black beans (cooked);;132;8.9;23.7;0.5;8.7;0.3;1;172;1 cup;legume
+Lentils (cooked);;116;9;20.1;0.4;7.9;1.8;2;198;1 cup;legume
+Sprouts (moong);sprouted moong,sprouts;62;6;12;0.4;1.8;4;10;100;1 cup;legume
+Hummus;;166;7.9;14.3;9.6;6;0.3;379;30;2 tbsp;spread
+Kadhi;punjabi kadhi,gujarati kadhi;85;3;8;4.5;0.5;3;300;200;1 bowl;indian
+Sambar rice;bisi bele bath;130;4;22;3;2;1.5;320;250;1 bowl;indian
+Rasam;;25;1;4;0.6;0.8;1.5;300;150;1 katori;indian
+Palak paneer;;150;7.5;5;11;2;1.5;350;150;1 katori;indian
+Paneer butter masala;paneer makhani;190;8;8;14;1;4;380;150;1 katori;indian
+Kadai paneer;kadhai paneer;175;8.5;6;13;1.5;3;370;150;1 katori;indian
+Matar paneer;mutter paneer;160;7.5;8;11;2;3;350;150;1 katori;indian
+Shahi paneer;;200;8;8;15;1;4;390;150;1 katori;indian
+Paneer tikka;;230;14;6;16;1;2;400;100;5 pieces;indian
+Aloo gobi;aloo gobhi;105;2.5;12;5.5;2.5;2;300;150;1 katori;indian
+Aloo sabzi;aloo ki sabzi,potato curry,aloo curry;110;2;15;5;2;1.5;310;150;1 katori;indian
+Aloo jeera;jeera aloo;125;2;17;6;2;1;300;150;1 katori;indian
+Bhindi masala;okra fry,bhindi fry;95;2.5;9;5.5;3;2;280;120;1 katori;indian
+Baingan bharta;brinjal bharta;85;2;8;5;3;3;260;150;1 katori;indian
+Mixed vegetable curry;mix veg,sabzi,vegetable curry;90;2.5;10;4.5;2.5;3;300;150;1 katori;indian
+Malai kofta;;200;5;11;15;1.5;4;380;150;1 katori;indian
+Egg bhurji;;149;10;1.6;11;0.1;1.4;170;100;2 eggs;indian
+Sarson ka saag;saag;75;3;6;4.5;3;1.5;250;150;1 katori;indian
+Lauki sabzi;;60;1.5;7;3;1.5;3;220;150;1 katori;indian
+Raita;boondi raita,cucumber raita,dahi raita;65;3;5;3.5;0.4;4;180;100;1 katori;indian
+
+# ---------- DAIRY ----------
+Milk (whole);full cream milk,doodh;61;3.2;4.8;3.3;0;5.1;43;240;1 glass;dairy
+Milk (toned);toned milk,amul taaza;58;3.1;4.7;3;0;4.7;45;240;1 glass;dairy
+Milk (skim);double toned milk,skimmed milk,low fat milk;34;3.4;5;0.1;0;5;42;240;1 glass;dairy
+Curd;dahi,yogurt,plain yogurt,yoghurt;61;3.5;4.7;3.3;0;4.7;46;100;1 katori;dairy
+Greek yogurt (nonfat);greek yoghurt,hung curd;59;10.2;3.6;0.4;0;3.2;36;170;1 cup;dairy
+Greek yogurt (full fat);;97;9;4;5;0;4;35;170;1 cup;dairy
+Buttermilk;chaas,chhaas,mattha;40;3.3;4.8;0.9;0;4.8;105;240;1 glass;dairy
+Sweet lassi;lassi;85;3;14;2;0;13;45;250;1 glass;drink
+Mango lassi;;95;2.8;18;1.8;0.3;17;40;250;1 glass;drink
+Cheddar cheese;cheese;403;24.9;1.3;33.1;0;0.5;653;28;1 slice;dairy
+Mozzarella;pizza cheese;280;28;3.1;17.1;0;1.2;627;28;1 oz;dairy
+Cheese slice (processed);amul cheese slice,cheese slices;300;18;5;23;0;3;1400;20;1 slice;dairy
+Cream cheese;;342;5.9;4.1;34.2;0;3.2;321;30;2 tbsp;dairy
+Parmesan;;431;38;4.1;29;0;0.9;1529;10;1 tbsp grated;dairy
+Butter;amul butter,makhan;717;0.9;0.1;81;0;0.1;643;10;2 tsp;fat
+Ghee;clarified butter;900;0;0;100;0;0;2;5;1 tsp;fat
+Fresh cream;heavy cream,malai;340;2.1;2.8;36;0;2.9;38;15;1 tbsp;dairy
+Ice cream (vanilla);ice-cream,icecream;207;3.5;23.6;11;0.7;21.2;80;66;1/2 cup;dessert
+Condensed milk;milkmaid;321;7.9;54;8.7;0;54;127;20;1 tbsp;dairy
+Khoa;mawa;421;14.6;20;31;0;20;100;30;2 tbsp;dairy
+Soy milk (unsweetened);soya milk;33;2.9;1.7;1.8;0.4;0.4;51;240;1 glass;dairy
+Almond milk (unsweetened);;15;0.6;0.3;1.2;0.2;0;72;240;1 glass;dairy
+Oat milk;;45;1;7;1.5;0.8;4;40;240;1 glass;dairy
+
+# ---------- OILS, FATS, SWEETENERS, CONDIMENTS ----------
+Olive oil;extra virgin olive oil;884;0;0;100;0;0;2;14;1 tbsp;fat
+Cooking oil;vegetable oil,sunflower oil,refined oil,mustard oil,groundnut oil,oil;884;0;0;100;0;0;0;14;1 tbsp;fat
+Coconut oil;;862;0;0;100;0;0;0;14;1 tbsp;fat
+Mayonnaise;mayo;680;1;0.6;75;0;0.6;635;14;1 tbsp;condiment
+Ketchup;tomato ketchup,tomato sauce;101;1;27;0.1;0.3;22;907;17;1 tbsp;condiment
+Soy sauce;;53;8;4.9;0.6;0.8;0.4;5493;16;1 tbsp;condiment
+Green chutney;mint chutney,coriander chutney;45;2;6;1.5;3;2;300;20;1 tbsp;condiment
+Tamarind chutney;imli chutney,sweet chutney;180;1;45;0.3;2;35;300;20;1 tbsp;condiment
+Salad dressing (ranch);ranch;430;1;6;45;0;4;800;30;2 tbsp;condiment
+Honey;shahad;304;0.3;82.4;0;0.2;82.1;4;21;1 tbsp;sweetener
+Sugar;white sugar,chini,cheeni;387;0;100;0;0;99.8;1;4;1 tsp;sweetener
+Jaggery;gud,gur;383;0.4;98;0.1;0;85;30;10;1 small piece;sweetener
+Maple syrup;;260;0;67;0.1;0;60;12;20;1 tbsp;sweetener
+Jam;fruit jam,mixed fruit jam;250;0.4;65;0.1;1;48;30;20;1 tbsp;spread
+Nutella;chocolate spread;539;6.3;57.5;30.9;3.4;56.3;42;37;2 tbsp;spread
+
+# ---------- NUTS & SEEDS ----------
+Almonds;badam;579;21.2;21.6;49.9;12.5;4.4;1;28;23 almonds;nuts
+Cashews;kaju;553;18.2;30.2;43.9;3.3;5.9;12;28;18 cashews;nuts
+Walnuts;akhrot;654;15.2;13.7;65.2;6.7;2.6;2;28;7 halves;nuts
+Peanuts;moongfali,groundnuts,roasted peanuts;567;25.8;16.1;49.2;8.5;4.7;18;28;1 handful;nuts
+Pistachios;pista;560;20.2;27.2;45.3;10.6;7.7;1;28;49 kernels;nuts
+Chia seeds;chia;486;16.5;42.1;30.7;34.4;0;16;12;1 tbsp;nuts
+Flax seeds;alsi,flaxseed,linseed;534;18.3;28.9;42.2;27.3;1.6;30;10;1 tbsp;nuts
+Sunflower seeds;;584;20.8;20;51.5;8.6;2.6;9;28;1/4 cup;nuts
+Pumpkin seeds;;559;30.2;10.7;49;6;1.4;7;28;1/4 cup;nuts
+Makhana;fox nuts,lotus seeds,phool makhana;347;9.7;77;0.1;14.5;0;5;30;1 cup;nuts
+Mixed nuts;trail mix,dry fruits;607;20;21;54;7;4;5;30;1 handful;nuts
+Roasted chana;bhuna chana,roasted chickpeas;364;19;61;5;17;8;60;30;1 handful;snack
+
+# ---------- SNACKS, BISCUITS, PACKAGED (typical values, scan your own label for exact) ----------
+Oreo;oreo cookies,oreo biscuit,oreo cookie,chocolate sandwich cookies;471;4.7;69;20;2.9;38;412;34;3 cookies;packaged
+Digestive biscuit;mcvitie's digestive,digestives;485;7;66;21;3.5;17;550;30;2 biscuits;packaged
+Parle-G;parle g,parle g biscuit,glucose biscuit;456;6.7;76;13.5;0.8;23;330;28;5 biscuits;packaged
+Marie biscuit;marie gold,marie;430;8;75;10.5;2.5;20;380;25;4 biscuits;packaged
+Good Day butter cookies;britannia good day,good day;490;6.5;66;22;1.5;25;380;30;3 cookies;packaged
+Hide & Seek;hide and seek,parle hide seek;487;5.5;68;21;2;30;250;30;3 biscuits;packaged
+Bourbon biscuit;britannia bourbon;470;5.5;72;18;2;34;300;30;3 biscuits;packaged
+Cream biscuit;sandwich biscuit;480;5.5;70;20;1.5;35;260;30;3 biscuits;packaged
+Rusk;toast rusk,cake rusk;410;10;74;7;3;15;300;20;2 rusks;packaged
+Chocolate chip cookie;cookie,cookies;488;5.7;64;24;2;36;350;30;1 cookie;dessert
+Potato chips;lays,lay's,chips,wafers,crisps;536;7;53;35;4.8;0.3;525;28;1 small packet;packaged
+Lay's Magic Masala;lays magic masala,magic masala;540;6.5;52;34;3.5;3;650;28;1 small packet;packaged
+Kurkure;kurkure masala munch;520;6;58;29;2;2;800;30;1 small packet;packaged
+Doritos;nacho chips,tortilla chips;490;7;62;24;4.5;2;600;28;1 small packet;packaged
+Bhujia;aloo bhujia,sev,namkeen,haldiram bhujia;570;14;42;38;5;2;900;30;1 handful;packaged
+Mixture namkeen;chivda,farsan;520;10;45;33;4;2;800;30;1 handful;packaged
+Popcorn (air popped);popcorn plain;387;12.9;77.8;4.5;14.5;0.9;8;24;3 cups;snack
+Popcorn (buttered);movie popcorn,caramel popcorn;500;7;55;29;8;12;600;30;2 cups;snack
+Pretzels;;380;10;80;3;3;3;1100;30;1 handful;snack
+Rice cake;puffed rice cake;387;8;82;2.8;4;0.5;30;9;1 cake;snack
+Murmura;puffed rice,kurmura,mamra;402;6;88;0.5;1;0;10;20;1 cup;snack
+Chocolate (milk);milk chocolate,cadbury;535;7.7;59;30;3.4;52;79;40;1 bar;dessert
+Dairy Milk;cadbury dairy milk;534;7.3;57;30;2;56;80;25;1 small bar;packaged
+Dark chocolate (70%);dark chocolate;598;7.8;45.9;42.6;10.9;24;20;28;1 oz;dessert
+Snickers;snickers bar;488;9;58;24;2;47;230;50;1 bar;packaged
+KitKat;kit kat;518;6.5;62;26;1.5;48;50;41.5;4 finger bar;packaged
+5 Star;five star;455;4;70;18;0.5;50;150;22;1 bar;packaged
+Granola bar;cereal bar,muesli bar;430;8;66;15;5;25;200;40;1 bar;packaged
+Instant noodles (dry);maggi dry,uncooked maggi,raw instant noodles,maggi packet;427;9.5;60;16;2.5;2;1800;70;1 pack;packaged
+Instant noodles (prepared);maggi,maggi noodles,maggi masala,2 minute noodles,ramen,maggi cooked,cooked maggi,cup noodles;190;4.5;27;7;1;1;800;250;1 bowl;packaged
+Cake (chocolate);chocolate cake,pastry;371;5;53;16;2;38;300;80;1 slice;dessert
+Cake (vanilla);sponge cake,plain cake;350;5;55;12;1;35;280;80;1 slice;dessert
+Brownie;;466;5.5;56;25;2.5;40;270;60;1 brownie;dessert
+Donut;doughnut,glazed donut;421;4.9;51;22;1.7;24;326;60;1 donut;dessert
+Muffin;blueberry muffin,chocolate muffin;377;5;50;18;1.5;28;400;113;1 muffin;dessert
+Pancakes;pancake;227;6.4;28;10;1;7;439;75;1 pancake;breakfast
+Waffle;waffles;291;7.9;33;14.1;1.8;8;511;75;1 waffle;breakfast
+Pastry (puff);veg puff,egg puff,puff pastry;380;6;35;24;1.5;3;450;80;1 puff;packaged
+
+# ---------- INDIAN SNACKS & SWEETS ----------
+Samosa;aloo samosa,veg samosa;262;3.5;24;17;2.5;1.5;420;80;1 samosa;indian
+Kachori;pyaz kachori,dal kachori;380;7;40;21;3;2;500;70;1 kachori;indian
+Pakora;bhajiya,bhaji,pakoda,onion pakoda,bajji;290;6;28;17;3;3;450;20;1 piece;indian
+Vada pav;wada pav,batata vada pav;250;5.5;34;10.5;2.5;3;520;110;1 vada pav;indian
+Pani puri;golgappa,puchka;190;3;28;7.5;2;3;380;20;1 puri with water;indian
+Bhel puri;bhel;175;4;28;5.5;3;4;400;100;1 plate;indian
+Sev puri;;240;4.5;29;12;3;4;500;100;1 plate;indian
+Pav bhaji;;170;4;24;7;3.5;4;520;250;1 plate with 2 pav;indian
+Misal pav;misal;160;6;21;5.5;4;3;480;300;1 plate;indian
+Aloo tikki;tikki;190;3;28;7.5;2.5;1.5;350;60;1 tikki;indian
+Chaat (papdi);dahi papdi chaat,papdi chaat;195;5;26;8;2.5;5;400;150;1 plate;indian
+Dahi vada;dahi bhalla;165;6;20;6.5;2;5;400;100;2 pieces;indian
+Momos (veg steamed);momo,veg momos,vegetable momos;165;4.5;27;4;1.8;2;450;100;5 pieces;indian
+Momos (chicken steamed);chicken momos,momo chicken;185;10;22;6;1;1.5;500;100;5 pieces;indian
+Momos (fried);fried momos;250;8;28;12;1.5;2;520;100;5 pieces;indian
+Gulab jamun;;325;5;50;12;0.5;40;80;45;1 piece;indian
+Jalebi;;380;2.5;70;10;0.5;50;20;30;1 piece;indian
+Rasgulla;rosogolla;186;4;38;1.5;0;32;40;50;1 piece;indian
+Rasmalai;;230;7;28;10;0;24;60;60;1 piece;indian
+Kheer;rice kheer,payasam,payasa;130;3.5;20;4;0.2;16;45;150;1 katori;indian
+Gajar halwa;carrot halwa;200;3.5;27;9;1.5;22;60;100;1 katori;indian
+Suji halwa;sooji halwa,rava sheera,sheera;250;3;38;10;0.5;22;50;100;1 katori;indian
+Besan ladoo;laddu,ladoo,besan laddu;450;9;50;24;3;30;60;40;1 ladoo;indian
+Motichoor ladoo;boondi ladoo;420;6;60;18;1;40;40;40;1 ladoo;indian
+Kaju katli;kaju barfi;470;9;52;25;1;40;30;20;1 piece;indian
+Barfi;milk barfi,burfi;400;9;55;16;0;50;60;30;1 piece;indian
+Peda;;380;9;58;12;0;55;50;25;1 piece;indian
+Peanut chikki;chikki,groundnut chikki;490;11;58;24;3;40;40;25;1 piece;indian
+Shrikhand;;190;5;30;5.5;0;28;50;100;1 katori;indian
+Falooda;;150;3;25;4;0.5;22;50;250;1 glass;indian
+Kulfi;;180;5;22;8;0;20;60;80;1 stick;indian
+
+# ---------- FAST FOOD & RESTAURANT ----------
+Pizza (cheese slice);cheese pizza,pizza slice,pizza,margherita;266;11;33;10;2.3;3.6;598;107;1 slice;fastfood
+Pizza (veg loaded);veg pizza,farmhouse pizza,dominos veg pizza;250;10;31;9.5;2.5;3.5;560;110;1 slice;fastfood
+Pizza (pepperoni);;298;12;30;14;2;3.5;760;110;1 slice;fastfood
+Cheeseburger;burger,mcdonalds cheeseburger;252;13;30;9;1.5;6;550;119;1 burger;fastfood
+Big Mac;mcdonald's big mac;257;12;20;14;1.5;4.5;470;215;1 burger;fastfood
+McAloo Tikki;aloo tikki burger;240;6;34;9;2.5;4.5;450;146;1 burger;fastfood
+McChicken;chicken burger;260;11;28;11.5;1.5;4;540;150;1 burger;fastfood
+Veg burger;;235;6.5;34;8.5;2.5;5;500;140;1 burger;fastfood
+French fries;fries,chips (fries),potato fries;312;3.4;41;15;3.8;0.3;210;117;1 medium portion;fastfood
+Chicken nuggets;nuggets,mcnuggets;296;15;18;18;1;0.5;560;96;6 pieces;fastfood
+Hot dog;;290;10;24;17;1;4;800;100;1 hot dog;fastfood
+Sandwich (veg grilled);veg sandwich,grilled sandwich,veg grilled sandwich;230;7;31;8.5;2.5;4;480;150;1 sandwich;fastfood
+Sandwich (chicken);chicken sandwich,club sandwich;240;14;26;9;1.5;3;520;180;1 sandwich;fastfood
+Grilled cheese sandwich;cheese sandwich;330;13;28;18;1.2;4;680;130;1 sandwich;fastfood
+Egg sandwich;egg bread;240;11;26;9.5;1.5;3;470;150;1 sandwich;fastfood
+Subway veggie delite 6 inch;subway veg,subway sandwich;165;6.5;29;2.5;3.5;5;400;220;6 inch;fastfood
+Burrito (chicken);burrito,burrito bowl;190;10;24;6;3;1.5;520;300;1 burrito;fastfood
+Wrap (paneer);paneer wrap,kathi roll,frankie,veg roll,egg roll,chicken roll;230;9;27;9.5;2;3;500;200;1 roll;fastfood
+Shawarma;chicken shawarma;230;13;24;9;1.5;3;560;200;1 shawarma;fastfood
+Falafel;;333;13.3;31.8;17.8;4.9;0;294;17;1 piece;fastfood
+Pasta (white sauce);alfredo pasta,creamy pasta;190;6;24;8;1.2;2;350;250;1 plate;fastfood
+Pasta (red sauce);arrabbiata,marinara pasta,tomato pasta;150;5;26;3;2;4;320;250;1 plate;fastfood
+Mac and cheese;mac n cheese;164;7;20;6;1;3;560;200;1 cup;fastfood
+Lasagna;;135;8;13;6;1;3;350;250;1 piece;fastfood
+Caesar salad;chicken caesar salad;140;7;7;9;1.5;2;380;250;1 bowl;fastfood
+Sushi roll;maki,sushi;145;4;27;2;0.8;5;430;30;1 piece;fastfood
+Fried rice;veg fried rice,egg fried rice;163;4;28;3.5;1;1;420;200;1 plate;fastfood
+Chicken fried rice;;180;8;26;5;1;1;450;200;1 plate;fastfood
+Schezwan fried rice;;175;4;29;4.5;1;2;520;200;1 plate;fastfood
+Hakka noodles;veg noodles,chowmein,chow mein,veg hakka noodles;150;4;24;4;1.5;2;480;200;1 plate;fastfood
+Chicken noodles;egg noodles,chicken chow mein;170;8;24;5;1.2;1.5;500;200;1 plate;fastfood
+Manchurian (gobi);gobi manchurian,veg manchurian,manchurian;190;4;22;9.5;2;5;650;150;1 plate;fastfood
+Chilli paneer;chilli paneer dry;230;10;12;16;1.5;5;600;150;1 plate;fastfood
+Chilli chicken;chicken chilli;210;16;10;12;1;4;650;150;1 plate;fastfood
+Spring roll;veg spring roll;230;4.5;28;11;2;2;420;80;1 roll;fastfood
+Tacos;taco;226;9;20;12;3;2;400;100;1 taco;fastfood
+Nachos with cheese;nachos;346;8;36;19;4;2;600;100;1 plate;fastfood
+Soup (tomato);tomato soup;40;1;8;0.8;1;5;400;250;1 bowl;soup
+Soup (sweet corn);veg sweet corn soup,chicken sweet corn soup;55;2;10;1;1;2;500;250;1 bowl;soup
+Soup (chicken);clear chicken soup;30;3;2;1;0;0.5;450;250;1 bowl;soup
+
+# ---------- DRINKS ----------
+Water;plain water;0;0;0;0;0;0;0;250;1 glass;drink
+Black coffee;coffee black,americano,espresso;1;0.1;0;0;0;0;2;240;1 cup;drink
+Coffee with milk and sugar;milk coffee,filter coffee,cappuccino;45;1.7;6;1.5;0;5.5;25;150;1 cup;drink
+Latte;cafe latte;54;3;5;2.5;0;5;45;350;1 regular;drink
+Cold coffee;iced coffee,frappe;75;2;13;1.8;0;12;40;300;1 glass;drink
+Chai;tea with milk and sugar,masala chai,milk tea,cutting chai;60;1.8;8.5;2;0;8;22;150;1 cup;drink
+Tea (no sugar);black tea,tea black,plain tea;1;0;0.2;0;0;0;3;240;1 cup;drink
+Green tea;;1;0;0.2;0;0;0;2;240;1 cup;drink
+Cola;coke,coca cola,pepsi,thums up,soft drink,soda;42;0;10.6;0;0;10.6;4;330;1 can;drink
+Diet cola;coke zero,diet coke,pepsi black,zero sugar cola;0.4;0;0;0;0;0;12;330;1 can;drink
+Sprite;7up,lemon soda,fanta;40;0;10;0;0;10;10;330;1 can;drink
+Orange juice;fresh orange juice,mosambi juice;45;0.7;10.4;0.2;0.2;8.4;1;240;1 glass;drink
+Apple juice;packaged juice,real juice,fruit juice;46;0.1;11.4;0.1;0.2;9.6;4;240;1 glass;drink
+Sugarcane juice;ganne ka ras;70;0.2;18;0;0;17;10;250;1 glass;drink
+Lemonade;nimbu pani,nimbu paani,shikanji;40;0.1;10;0;0;9;5;250;1 glass;drink
+Energy drink;red bull,monster;45;0;11;0;0;11;80;250;1 can;drink
+Sports drink;gatorade,electrolyte drink;26;0;6.5;0;0;5.5;41;500;1 bottle;drink
+Protein shake (ready to drink);;70;10;4;1.5;0;3;100;330;1 bottle;drink
+Banana shake;milkshake banana;90;3;16;2;0.8;12;40;300;1 glass;drink
+Milkshake (chocolate);chocolate shake;110;3;18;3;0.5;16;60;300;1 glass;drink
+Smoothie (fruit);fruit smoothie;65;1;15;0.4;1.5;11;5;300;1 glass;drink
+Beer;lager;43;0.5;3.6;0;0;0;4;330;1 bottle;alcohol
+Wine (red);red wine,wine;85;0.1;2.6;0;0;0.6;4;150;1 glass;alcohol
+Whisky;vodka,rum,gin,brandy,spirits,whiskey;231;0;0;0;0;0;1;30;1 peg (30 ml);alcohol
+Cocktail;margarita,mojito;130;0;12;0;0;10;10;180;1 glass;alcohol
+
+# ---------- AUSTRALIA / COLES SHOP (typical label values per 100 g, brands vary by variety: scan your own pack for exact) ----------
+# Biscuits & crackers
+Tim Tam (Original);tim tam,tim tams,arnotts tim tam,chocolate biscuit;500;5.5;64;24.5;2.5;40;190;18.5;1 biscuit;packaged
+Tim Tam (Double Coat);double coat tim tam;505;5.5;62;26;2.5;39;180;18.5;1 biscuit;packaged
+Arnott's Shapes;shapes,arnotts shapes,pizza shapes,barbecue shapes;485;9;60;23;3;4;1000;25;about 17 shapes;packaged
+Arnott's Jatz;jatz,jatz crackers;450;10;66;16;3;3;800;15;3 biscuits;packaged
+Arnott's Savoy;savoy,savoy crackers;465;9;62;20;3;3;850;15;3 crackers;packaged
+Arnott's Scotch Finger;scotch finger,scotch fingers;485;6.5;70;20;2;27;230;22;2 biscuits;packaged
+Arnott's Iced Vo-Vo;vovo,vo-vo,iced vovo;465;4.5;69;19;2;33;120;25;1 biscuit;packaged
+Arnott's Monte Carlo;monte carlo;465;5;68;19;2;30;180;25;1 biscuit;packaged
+Arnott's Milk Arrowroot;arrowroot,milk arrowroot;430;8;76;10;2.5;18;300;20;3 biscuits;packaged
+Arnott's Choc Ripple;choc ripple;490;5;68;22;3;32;150;20;2 biscuits;packaged
+Arnott's Nice;nice biscuit,nice biscuits;465;6;70;18;2.5;22;250;20;2 biscuits;packaged
+Arnott's Shortbread Cream;shortbread cream;490;5;66;23;1.5;30;200;20;2 biscuits;packaged
+Anzac biscuit;anzac biscuits,anzac;450;5;65;19;3;30;170;20;1 biscuit;dessert
+Vita-Weat Original;vita weat,vitaweat,crispbread;375;11;66;5;12;1.5;550;14;3 crispbreads;packaged
+Cruskits;cruskits original;400;11;70;7;6;2;650;12;3 crackers;packaged
+Rice crackers (plain);rice cracker,sakata;380;7;80;3;1;1;500;25;1 handful;packaged
+Rice cakes (Corn thins);corn thins,cornthins;375;8;78;2;4;1;100;6;1 corn thin;packaged
+# Cereal, spreads, breakfast
+Weet-Bix;weetbix,weet bix;358;11.5;67;1.5;10;3;270;15;1 biscuit;cereal
+Uncle Tobys Quick Oats;uncle tobys oats,quick oats,instant oats;370;11;60;7.5;9;1;5;40;1/2 cup dry;cereal
+Uncle Tobys Oats Sachet (flavoured);oats sachet,uncle tobys sachet;375;8;66;6;6;20;100;40;1 sachet;cereal
+Nutri-Grain;kelloggs nutri-grain,nutrigrain;375;7;75;2;3;20;550;30;4 biscuits;cereal
+Sultana Bran;kelloggs sultana bran;320;9;60;1.5;14;25;400;45;3/4 cup;cereal
+Rice Bubbles;rice bubbles cereal,rice krispies;380;6;85;1;1;10;600;30;1 cup;cereal
+Coco Pops;;385;5;83;3;2;35;350;30;1 cup;cereal
+Special K;kelloggs special k;375;14;72;1.5;4;17;550;30;1 cup;cereal
+Bircher muesli;;160;5;22;5.5;2.5;10;40;150;1 serve;breakfast
+Vegemite;vegemite spread;150;24;7;1;0;1;3500;5;1 tsp;spread
+Peanut butter (smooth);bega peanut butter,coles peanut butter,mayvers;600;24;12;50;6;7;350;32;2 tbsp;spread
+Honey (Capilano);capilano honey;310;0.4;81;0;0;80;5;21;1 tbsp;sweetener
+Milo (powder);milo,nestle milo,milo powder;390;9.3;71;6.4;3;42;150;20;2 tsp;drink
+Milo (made with milk);milo drink,milo milk;85;3.6;11.5;2.7;0.3;9.5;55;250;1 glass;drink
+# Bread & bakery
+Sourdough bread;sourdough,sourdough slice,coles sourdough;260;9;50;1.5;3;3;550;45;1 slice;bread
+Tip Top 9 Grain;9 grain bread,tip top bread,helgas;250;11;40;4.5;7;4;420;35;1 slice;bread
+Wholemeal wrap;mission wrap,wrap,tortilla wrap;300;9;50;6;5;3;650;60;1 wrap;bread
+Turkish bread;turkish roll;270;9;52;2.5;3;3;500;60;1 piece;bread
+Crumpet;crumpets;190;5;38;1;2;2;420;55;1 crumpet;bread
+English muffin;muffin split;235;9;44;2;3;4;450;60;1 muffin;bread
+Pita bread;pita,pocket bread;275;9;55;1.2;2.2;2;540;60;1 pita;bread
+Hot cross bun;hot cross buns;300;7.5;54;5.5;2.5;18;300;70;1 bun;bread
+# Chips, snacks, sweets
+Smith's Original Crinkle Cut;smiths chips,smiths crinkle cut,crinkle cut chips;510;6;52;31;4;1;550;30;1 small bag;packaged
+Smith's Chicken;smiths chicken chips,chicken chips;505;6.5;53;30;4;2;750;30;1 small bag;packaged
+Twisties (Cheese);twisties,twistie;495;5.5;60;26;2;3;900;30;1 small bag;packaged
+Cheezels;cheezel;490;7;61;23;2;3;850;30;1 small bag;packaged
+Burger Rings;;490;6;62;24;2;2;900;30;1 small bag;packaged
+CCs Nacho Cheese;ccs,cc's corn chips;490;6;62;24;4;2;900;30;1 small bag;packaged
+Pringles Original;pringles;540;4;51;34;3;1;600;30;1 serve (about 14 crisps);packaged
+Popcorn (microwave butter);act ii,microwave popcorn;480;9;55;25;9;1;800;30;1 cup popped;snack
+Golden Gaytime;gaytime;290;4.3;32;16;1;24;80;70;1 icecream;dessert
+Paddle Pop (Chocolate);paddle pop;180;2.5;24;8;0.5;20;50;90;1 stick;dessert
+Zooper Dooper;zooper doopers,freezer pop,ice block;60;0;15;0;0;15;5;70;1 pop;dessert
+Magnum Classic;magnum,magnum ice cream;285;3;28;18;1;26;45;86;1 icecream;dessert
+Weis Bar (Mango);weis bar,weis;125;1;22;3.5;1;20;10;70;1 bar;dessert
+Cadbury Dairy Milk Block;dairy milk block,cadbury block;535;7.3;57;30;2;56;80;25;4 squares;packaged
+Cadbury Caramilk;caramilk;540;6;58;32;1;57;120;25;4 squares;packaged
+Cadbury Picnic;picnic bar;490;7;60;25;2;45;140;46;1 bar;packaged
+Cadbury Crunchie;crunchie;460;3.5;71;18;0.5;62;300;40;1 bar;packaged
+Cadbury Freddo;freddo frog,freddo;530;7;58;30;1;55;80;12;1 frog;packaged
+Cadbury Flake;flake;545;8;55;33;1;54;100;32;1 bar;packaged
+Cherry Ripe;cadbury cherry ripe;450;4;60;21;3;50;90;50;1 bar;packaged
+Violet Crumble;;465;3.5;71;19;0.5;60;250;30;1 bar;packaged
+Maltesers;malteser;500;8;66;23;2;50;300;37;1 small packet;packaged
+Mars Bar;mars;450;4;70;17;1;60;250;51;1 bar;packaged
+Twix;;495;5;66;24;1;50;130;50;2 bars;packaged
+Ferrero Rocher;;575;8;45;41;3;40;45;12.5;1 piece;packaged
+Lindt Excellence 70%;lindt dark,lindt 70;560;9;35;42;11;25;10;20;2 squares;packaged
+Jelly snakes;allens,lollies,red skins,gummy lollies,haribo;350;5;80;0.2;0;55;50;30;1 handful;packaged
+Muesli bar (chewy);carmans bar,carman's muesli bar,uncle tobys muesli bar;420;6;68;14;5;28;200;30;1 bar;packaged
+Roll-Ups (fruit);uncle tobys roll ups,fruit roll;350;1;80;2;2;55;50;16;1 roll;packaged
+# Dairy & chilled
+Chobani Greek Yogurt (Plain);chobani,chobani plain;70;9;4;1.6;0;4;40;170;1 tub;dairy
+Chobani Greek Yogurt (Flavoured);chobani fruit,chobani strawberry;95;8;12;2;0.5;10;40;170;1 tub;dairy
+Farmers Union Greek Style;farmers union yoghurt,greek style yoghurt;105;5;13;3.5;0;12;55;150;1 tub;dairy
+Yoplait Fruit Yoghurt;yoplait,fruit yoghurt,yogurt flavoured;95;4;15;2;0;13;50;175;1 tub;dairy
+Bega Tasty Cheese;bega cheese,tasty cheddar,cheddar block;410;25;0.5;34;0;0.5;680;30;1 slice;dairy
+Cheese slices (Kraft);kraft singles,coles cheese slices;290;17;6;22;0;5;1350;19;1 slice;dairy
+Cottage cheese (tub);coles cottage cheese,cottage cheese;95;11;3;4;0;3;380;100;1/2 cup;dairy
+Ricotta;fresh ricotta;165;10;3;12;0;2;100;50;1/4 cup;dairy
+Feta;;265;15;4;21;0;4;1100;30;1 matchbox;dairy
+Chocolate milk (Farmers Union Iced);chocolate milk,big m,oak,dare milk;75;3.4;10;2.5;0.2;9;60;500;1 bottle;drink
+Dare Iced Coffee;dare iced coffee,farmers union iced coffee,ice break,iced coffee milk;70;3.3;10;2;0;9.5;65;500;1 bottle;drink
+Up&Go Chocolate;up and go,sanitarium up&go,upngo;80;3.6;11.5;2;1;7;100;250;1 tetra;drink
+Yakult;;70;1;15;0;0;13;20;65;1 bottle;drink
+# Meat, fish, deli
+Roast chicken (Coles BBQ, with skin);coles roast chicken,rotisserie chicken,bbq chicken,roast chicken;220;24;1;13;0;0;650;150;1/4 chicken;protein
+Chicken thigh fillet (cooked);thigh fillet;195;25;0;10;0;0;90;120;1 fillet;protein
+Chicken schnitzel (crumbed);chicken parma,crumbed chicken,schnitzel;230;14;18;11;1;1;520;150;1 schnitzel;fastfood
+Chicken tenders (crumbed);tenders,chicken strips;245;14;20;12;1;1;600;100;3 pieces;protein
+Beef mince (lean, cooked);beef mince 5 star,lean mince,coles beef mince;200;27;0;10;0;0;75;100;1/2 cup;protein
+Lamb mince (cooked);;250;24;0;17;0;0;75;100;1/2 cup;protein
+Lamb chop (grilled);lamb cutlet,lamb loin chop,lamb forequarter;270;25;0;19;0;0;75;100;2 chops;protein
+Lamb leg roast (cooked);roast lamb;215;28;0;11;0;0;75;120;3 slices;protein
+Rump steak (grilled);beef steak rump,scotch fillet,sirloin;200;29;0;9;0;0;60;150;1 steak;protein
+Pork belly (roasted);;470;14;0;45;0;0;60;100;1 slice;protein
+BBQ sausage (beef);snag,beef sausage,sausage sizzle,coles bbq sausages;260;12;6;21;1;1;800;60;1 sausage;protein
+Sausage in bread;sausage sizzle bread,sausage sandwich;270;11;24;14;1.5;3;650;130;1 sausage in bread;fastfood
+Barramundi (grilled);barra,barramundi fillet;120;24;0;2.5;0;0;60;150;1 fillet;protein
+Salmon fillet (baked, Atlantic);atlantic salmon,coles salmon;208;22;0;13;0;0;60;140;1 fillet;protein
+Fish fingers (crumbed);birds eye fish fingers,fish finger;200;12;18;9;1;1;400;85;3 fingers;protein
+Fish and chips (battered fish);fish and chips,battered fish,flake;250;14;20;13;1.5;1;400;150;1 piece fish;fastfood
+Hot chips (takeaway);chips,hot chips,potato chips hot,chippy chips;290;3.5;38;14;3.5;0.5;250;150;1 small serve;fastfood
+Kangaroo (grilled);roo meat,kangaroo steak,kangaroo mince;115;24;0;2;0;0;55;120;1 steak;protein
+Prawns (cooked, peeled);cooked prawns,coles prawns;99;24;0.2;0.3;0;0;540;100;8 prawns;protein
+Ham (shaved);shaved ham,deli ham,leg ham;105;17;2;3;0;1.5;1100;40;2 slices;protein
+Salami;;430;22;2;37;0;1;1800;20;3 slices;protein
+Tuna (canned in oil);tuna oil,john west tuna,sirena;190;26;0;9.5;0;0;350;95;1 small can drained;protein
+Tuna (canned in springwater);tuna springwater,john west springwater;105;24;0;1;0;0;300;95;1 small can;protein
+Meat pie;aussie meat pie,four n twenty pie,beef pie,steak pie,party pie;265;8;24;15;1.5;1;550;175;1 pie;fastfood
+Sausage roll;sausage rolls,party sausage roll;325;8;26;21;1.5;1.5;560;120;1 roll;fastfood
+Chicken and mushroom pie;chicken pie;250;8;24;14;1.5;1;500;175;1 pie;fastfood
+Egg and bacon roll;bacon and egg roll,brekkie roll;260;13;26;11;1.5;3;650;180;1 roll;fastfood
+# Pantry, tinned, frozen
+Baked beans (Heinz);baked beans,tinned beans;78;4.6;12;0.3;4;4.5;350;130;1/2 can;legume
+Spaghetti in tomato sauce;tinned spaghetti,heinz spaghetti;62;1.8;13;0.3;1.2;5;350;125;1/2 can;packaged
+Canned lentils;lentils tinned,coles lentils;85;6;12;0.8;4;1;200;130;1/2 can;legume
+Canned chickpeas;chickpeas tinned;115;6;15;3;5;0.5;250;130;1/2 can;legume
+Microwave rice (Sunrice);sunrice,microwave rice,rice pouch,uncle bens rice;150;3;32;1;0.5;0;250;125;1 pouch (250 g = 2 serves);packaged
+Pasta sauce (tomato);dolmio,leggos,pasta sauce jar,napoli sauce;50;1.5;9;1;1.5;7;450;125;1/2 cup;condiment
+Frozen mixed vegetables;frozen veg,frozen vegetables;55;3.3;9;0.5;3.5;3;40;100;1 cup;vegetable
+Frozen berries;mixed berries;45;1;9;0.4;3.5;7;2;100;3/4 cup;fruit
+Frozen peas;;70;5.5;10;0.5;5.5;4;5;80;1/2 cup;vegetable
+Pumpkin soup (fresh tub);coles pumpkin soup;45;1;8;1.2;1.2;4;250;250;1 cup;soup
+Coles frozen pizza (supreme);frozen pizza,ham and pineapple pizza;245;11;31;8;2;3.5;580;110;1 slice;fastfood
+Indomie Mi Goreng (dry);indomie,mi goreng,indomie mi goreng,mie goreng;465;9.5;60;20;2.5;3;1600;85;1 pack;packaged
+Mi Goreng (prepared);indomie prepared,cooked mi goreng;190;4;24;8;1;1;650;250;1 pack cooked;packaged
+Rice paper roll;rice paper rolls,vietnamese roll,summer roll;115;4.5;20;1.5;1.5;3;250;80;1 roll;fastfood
+Sushi roll (chicken teriyaki);coles sushi,sushi hand roll,sushi train;165;6;28;3;1;5;500;100;1 roll;fastfood
+Cheesecake;baked cheesecake;320;6;28;21;0.5;22;300;110;1 slice;dessert
+Lamington;lamingtons;350;4;50;15;2.5;35;150;55;1 lamington;dessert
+Apple pie;;250;2.5;35;11;1.5;15;250;120;1 slice;dessert
+Pavlova;pav;270;3;62;0.5;0;60;40;80;1 slice with cream;dessert
+Fairy bread;;300;7;50;8;2.5;18;350;40;1 slice;dessert
+# Drinks
+Flat white;flat white coffee,cafe flat white;55;3.2;4.8;2.8;0;4.8;45;250;1 regular;drink
+Skinny latte;skim latte,skinny flat white;35;3.4;5;0.2;0;5;45;300;1 regular;drink
+Almond latte;almond flat white;30;1;3;1.5;0.2;2;60;300;1 regular;drink
+Kombucha;;15;0;3.5;0;0;3;5;330;1 bottle;drink
+V Energy Drink;v energy,v green;45;0;11;0;0;11;50;250;1 can;drink
+Powerade;powerade ion4;25;0;6;0;0;5.5;40;600;1 bottle;drink
+Mount Franklin Lightly Sparkling;mount franklin,sparkling water,soda water,mineral water;0;0;0;0;0;0;5;375;1 can;drink
+Lemon Lime & Bitters;lime and bitters,lemon lime bitters;40;0;10;0;0;10;10;330;1 can;drink
+Bundaberg Ginger Beer;bundaberg,ginger beer;45;0;11;0;0;11;10;375;1 bottle;drink
+Boags Premium Light;light beer,mid strength beer,xxxx gold,boags;32;0.3;1.8;0;0;0;5;375;1 can;alcohol
+
+# ---------- RAW / DRY INGREDIENTS (for meal prep recipes: weigh before cooking) ----------
+Basmati rice (raw);basmati rice dry,basmati dry,dry basmati,uncooked basmati;349;8;77;0.6;1.3;0.1;5;185;1 cup dry;grain
+Toor dal (raw);arhar dal dry,toor dal dry,tur dal raw,dry toor dal;343;22;63;1.5;15;3;17;200;1 cup dry;legume
+Moong dal (raw);moong dal dry,mung dal dry,yellow moong raw;347;24;63;1.2;16;7;15;200;1 cup dry;legume
+Masoor dal (raw);red lentils dry,masoor dry,lentils dry;352;25;60;1.1;11;2;6;200;1 cup dry;legume
+Chana dal (raw);chana dal dry,split chickpeas dry;360;21;61;5.6;11;5;24;200;1 cup dry;legume
+Rajma (dry);kidney beans dry,rajma raw;333;24;60;0.8;25;2;24;200;1 cup dry;legume
+Chickpeas (dry);chana dry,kabuli chana dry,chickpeas raw;364;19;61;6;17;11;24;200;1 cup dry;legume
+Atta (whole wheat flour);atta,wheat flour,whole wheat flour,chakki atta;340;12;72;1.7;11;0.4;2;120;1 cup;grain
+Maida (plain flour);plain flour,all purpose flour,refined flour;364;10;76;1;2.7;0.3;2;125;1 cup;grain
+Besan (gram flour);besan,chickpea flour;387;22;58;6.7;11;11;64;92;1 cup;grain
+Semolina (suji);rava,sooji,suji raw;360;13;73;1.1;3.9;2;1;167;1 cup;grain
+Chicken thigh (raw, skinless);chicken thigh raw,chicken thighs raw,thigh fillet raw;121;19.7;0;4.1;0;0;84;150;1 thigh;protein
+Chicken thigh (raw, with skin);chicken thigh with skin raw,chicken legs raw;211;17;0;15.5;0;0;95;150;1 thigh;protein
+Chicken mince (raw);minced chicken raw;143;17.4;0;8.1;0;0;60;100;100 g;protein
+Beef (raw, lean);beef raw,raw beef,diced beef;143;21;0;6;0;0;60;100;100 g;protein
+Mutton (raw);goat meat raw,lamb raw,raw mutton,lamb diced;143;20;0;6.5;0;0;70;100;100 g;protein
+Fish fillet (raw, white);white fish raw,basa raw,fish raw;90;19;0;1.3;0;0;60;150;1 fillet;protein
+Prawns (raw);raw prawns,shrimp raw;85;18;0;1;0;0;120;100;100 g;protein
+Salmon (raw);raw salmon;208;20.4;0;13.4;0;0;59;150;1 fillet;protein
+Egg (raw);eggs raw,whole egg raw,raw egg;143;12.6;0.7;9.5;0;0.4;142;50;1 large egg;protein
+Coconut milk;coconut milk canned,coconut cream;197;2;2.8;21;0;2;13;100;100 ml;dairy
+Tomato puree;passata,tomato paste,crushed tomatoes;38;1.7;8;0.2;1.5;5;40;100;100 g;condiment
+Salt;table salt;0;0;0;0;0;0;38758;5;1 tsp;condiment
+Spice mix (masala);garam masala,curry powder,spices,chilli powder;300;12;50;12;25;2;50;5;1 tsp;condiment
+Sweet potato (raw);raw sweet potato;86;1.6;20;0.1;3;4.2;55;130;1 medium;vegetable

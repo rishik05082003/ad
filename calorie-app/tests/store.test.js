@@ -7,7 +7,7 @@ import path from 'node:path';
 process.env.CAL_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'lean-'));
 const store = await import('../server/db.js');
 const { saveRecipe } = await import('../server/recipes.js');
-const { matchFoods } = await import('../server/match.js');
+const { matchFoods } = await import('../public/core/match.js');
 store.seedIfNeeded();
 
 test('habits are remembered, updated in place, newest first', () => {
