@@ -4,6 +4,18 @@ const p = (kcal, protein, carbs, fat, fiber = 0, sugar = 0, sodium_mg = 0) => ({
 
 export async function mock(schemaName) {
   await new Promise((r) => setTimeout(r, 900));
+  if (schemaName === 'recipe_parse') {
+    return {
+      name: 'Chicken rice meal prep', total_cooked_g: 2400, portions: 6,
+      ingredients: [
+        { name: 'chicken thigh, raw', grams: 1000, hidden: false, per_100g: p(121, 19.7, 0, 4.1) },
+        { name: 'basmati rice, dry', grams: 500, hidden: false, per_100g: p(349, 8, 77, 0.6, 1.3) },
+        { name: 'cooking oil', grams: 28, hidden: true, per_100g: p(884, 0, 0, 100) },
+        { name: 'onion', grams: 220, hidden: false, per_100g: p(40, 1.1, 9.3, 0.1, 1.7, 4.2, 4) },
+      ],
+      questions: [{ item_name: 'Chicken rice meal prep', question: 'Was the chicken skin on?', options: ['Skin on', 'Skinless'] }], warnings: [],
+    };
+  }
   if (schemaName === 'label_scan') {
     return {
       readable: true, product_name: 'Oreo Original Cookies', brand: 'Cadbury', barcode: '7622201234567',
@@ -30,6 +42,6 @@ export async function mock(schemaName) {
       { name: 'Green salad', kind: 'single', cooking_method: 'raw', grams: 60, grams_low: 40, grams_high: 80, confidence: 0.6, reasoning: 'Small handful of cucumber, onion, tomato.', saved_product_id: null, per_100g: p(20, 1, 4, 0.2, 1.5, 2, 20), ingredients: [] },
       { name: 'Masala chai with sugar', kind: 'drink', cooking_method: 'boiled', grams: 150, grams_low: 120, grams_high: 180, confidence: 0.7, reasoning: 'Small glass.', saved_product_id: null, per_100g: p(60, 1.8, 8.5, 2, 0, 8, 22), ingredients: [] },
     ],
-    warnings: [], questions: ['Was the dal tempered in ghee or oil?'],
+    warnings: [], questions: [{ item_name: 'Dal tadka', question: 'How much ghee or oil went into the dal?', options: ['1 tsp', '1 tbsp', '2 tbsp', 'None'] }, { item_name: 'Masala chai with sugar', question: 'How many teaspoons of sugar?', options: ['0', '1 tsp', '2 tsp'] }],
   };
 }

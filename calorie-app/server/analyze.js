@@ -11,7 +11,7 @@
 //
 // Weights always come from vision + your hint. Calories never do: they come from data.
 import { chatJSON, imageParts } from './openai.js';
-import { MEAL_SCHEMA, LABEL_SCHEMA } from './schemas.js';
+import { MEAL_SCHEMA, LABEL_SCHEMA, RECIPE_SCHEMA } from './schemas.js';
 import { matchFoods, nameSimilarity } from './match.js';
 import { scale, sum, reconcile, num, round1, NUTRIENTS } from './nutrition.js';
 
@@ -35,7 +35,10 @@ METHOD
 9. The user's note overrides your visual guess whenever it states a quantity or fraction ("ate half", "about 200 g rice", "2 rotis"). Apply it and mention it in reasoning. Otherwise ignore the note.
 10. Several photos usually show the SAME meal from different angles. Use them to judge depth and do not double count. If the note says they are different meals, list all.
 11. grams_low/grams_high is your honest range. confidence: 0.9 clear and standard, 0.6 partly hidden, 0.3 guess. Lower it when food is hidden under sauce or the scale is unclear.
-12. If nothing edible is visible return an empty items array and a warning. Use questions for 0-3 things the user could answer to sharpen the estimate (e.g. "Was the rice cooked with ghee?").
+12. If nothing edible is visible return an empty items array and a warning.
+13. QUESTIONS: ask 0-4 clarifying questions, only when the answer would change the calories by roughly 50 kcal or more. Typical ones: amount and type of cooking fat (oil, ghee, butter), sugar or milk in a drink, sauce or dressing amount, whether it is homemade or restaurant, what the filling is, how much of a batch dish was served. Each must be short and concrete with 2-4 realistic quick-answer options (e.g. "1 tsp", "1 tbsp", "2 tbsp", "None"). Never ask something already covered by the user note, the user's earlier answers or their known habits.
+14. User answers to your earlier questions are authoritative: apply them (e.g. "2 tbsp oil" means 28 g of oil as a hidden ingredient). Known habits are how this user usually cooks: apply them unless the photo or note contradicts them.
+15. Items in the saved list marked [own recipe] are the user's meal-prep dishes. If a dish on the plate is clearly one of them, set saved_product_id and estimate the weight of the portion eaten (a full portion is the listed portion weight).
 Return only JSON matching the schema.`;
 
 const PASS_STYLES = [
@@ -47,7 +50,7 @@ const PASS_STYLES = [
 function savedBlock(saved) {
   if (!saved?.length) return 'The user has no saved packaged products yet.';
   return 'User saved products (use saved_product_id when an item is clearly one of these):\n' + saved
-    .map((f) => `id=${f.id} | ${[f.brand, f.name].filter(Boolean).join(' ')} | ${Math.round(f.kcal)} kcal/100g | serving ${f.serving_label || ''} (${f.serving_g} g)`)
+    .map((f) => `id=${f.id} | ${[f.brand, f.name].filter(Boolean).join(' ')}${f.source === 'recipe' ? ' [own recipe]' : ''} | ${Math.round(f.kcal)} kcal/100g | serving ${f.serving_label || ''} (${Math.round(f.serving_g)} g)`)
     .join('\n');
 }
 
@@ -230,7 +233,28 @@ export function finalize(items) {
  * @param {number} [p.passes] 1-3
  * @param {object} deps injectable for tests: { chat, foods, saved }
  */
-export async function analyzeMeal({ images, hint = '', passes = 2 }, deps) {
+/** Text block with the user's answers and remembered habits, shared by meal and recipe prompts. */
+export function memoryBlock(answers = [], habits = []) {
+  const parts = [];
+  const a = answers.filter((x) => x?.answer?.trim());
+  if (a.length) parts.push('User answers to your earlier questions (authoritative, apply them):\n' + a.map((x) => `- ${x.item_name ? `[${x.item_name}] ` : ''}Q: ${x.question} A: ${x.answer}`).join('\n'));
+  const h = habits.filter((x) => x?.answer);
+  if (h.length) parts.push('Known habits of this user (apply unless contradicted):\n' + h.map((x) => `- ${x.item ? `${x.item}: ` : ''}${x.question} -> ${x.answer}`).join('\n'));
+  return parts.join('\n\n');
+}
+
+export const cleanQuestions = (lists) => {
+  const seen = new Set(); const out = [];
+  for (const q of lists.flat()) {
+    const text = (q?.question || '').trim();
+    if (!text || seen.has(text.toLowerCase())) continue;
+    seen.add(text.toLowerCase());
+    out.push({ item_name: q.item_name || '', question: text, options: (q.options || []).filter(Boolean).slice(0, 4) });
+  }
+  return out.slice(0, 4);
+};
+
+export async function analyzeMeal({ images, hint = '', passes = 2, answers = [], habits = [] }, deps) {
   const { chat = chatJSON, foods, saved = [] } = deps;
   if (!images?.length) throw Object.assign(new Error('Add at least one photo.'), { status: 400 });
   const n = Math.max(1, Math.min(3, Math.round(passes) || 1));
@@ -239,7 +263,7 @@ export async function analyzeMeal({ images, hint = '', passes = 2 }, deps) {
 
   const calls = Array.from({ length: n }, (_, i) => chat({
     system: `${SYSTEM_MEAL}\n\n${PASS_STYLES[i % PASS_STYLES.length]}`,
-    userContent: [{ type: 'text', text: `${note}\n\n${savedBlock(saved)}\n\nAnalyse the meal in the attached photo(s).` }, ...imageParts(images)],
+    userContent: [{ type: 'text', text: `${note}\n\n${memoryBlock(answers, habits)}\n\n${savedBlock(saved)}\n\nAnalyse the meal in the attached photo(s).` }, ...imageParts(images)],
     schema: MEAL_SCHEMA, schemaName: 'meal_analysis', temperature: i === 0 ? 0.1 : 0.4,
   }));
   const settled = await Promise.allSettled(calls);
@@ -254,7 +278,7 @@ export async function analyzeMeal({ images, hint = '', passes = 2 }, deps) {
   if (!items.length) allWarn.push('No food was detected in the photo.');
   return {
     summary: ok[0].meal_summary, scale_reference: ok[0].scale_reference, items, totals, warnings: allWarn,
-    questions: [...new Set(ok.flatMap((r) => r.questions || []))].slice(0, 3), meta: { passes: ok.length },
+    questions: cleanQuestions(ok.map((r) => r.questions || [])), meta: { passes: ok.length },
   };
 }
 
@@ -314,4 +338,33 @@ export async function analyzeLabel({ images, hint = '' }, deps = {}) {
     schema: LABEL_SCHEMA, schemaName: 'label_scan', temperature: 0,
   });
   return normalizeLabel(raw);
+}
+
+// ---------------------------------------------------------------- recipes (meal prep)
+const SYSTEM_RECIPE = `You turn a home cook's description of a batch recipe into a precise ingredient list for calorie counting.
+- Weights are RAW / as-added weights (dry rice, raw meat, oil as poured), in grams. Convert household measures with standards: 1 tbsp oil/ghee/butter 14 g, 1 tsp 5 g, 1 cup raw rice 185 g, 1 cup dal raw 200 g, 1 medium onion 110 g, 1 medium tomato 120 g, 1 egg 50 g, 1 medium potato 170 g, 1 cup milk 245 g, 1 tbsp sugar 12 g.
+- Name each ingredient with its state ("chicken thigh, raw", "basmati rice, dry", "cooking oil"). One line per ingredient. Ignore salt, water and small amounts of spices.
+- total_cooked_g is the final weight of the whole cooked batch if the user gave it, else null. portions is the number of portions if given, else null. Never invent either.
+- per_100g is your estimate for that ingredient as named (raw if raw). It is only a fallback when the database has no match.
+- Use questions (0-4) for things that change calories a lot and were not said: how much oil or ghee, skin on or off and fat trimmed, rice type, coconut milk or cream, sugar. Short, concrete, with 2-4 realistic quick-answer options. Never ask what the description, answers or habits already say.
+- User answers are authoritative: apply them (e.g. "3 tbsp oil" becomes cooking oil, 42 g).
+Return only JSON matching the schema.`;
+
+export async function parseRecipe({ text, answers = [], habits = [] }, deps) {
+  const { chat = chatJSON, foods } = deps;
+  if (!String(text || '').trim()) throw Object.assign(new Error('Describe what you cooked first.'), { status: 400 });
+  const raw = await chat({
+    system: SYSTEM_RECIPE,
+    userContent: [{ type: 'text', text: `${memoryBlock(answers, habits)}\n\nRecipe description:\n${text.trim()}` }],
+    schema: RECIPE_SCHEMA, schemaName: 'recipe_parse', temperature: 0.1,
+  });
+  const byId = new Map(foods.map((f) => [f.id, f]));
+  const ingredients = (raw.ingredients || []).filter((g) => num(g.grams) > 0 && g.name).map((g) => {
+    const gr = ground({ name: g.name, per_100g: g.per_100g }, foods, byId);
+    return { name: g.name, grams: round1(g.grams), hidden: !!g.hidden, source: gr.source, food_id: gr.food_id, food_name: gr.food_name, match_score: gr.match_score, per100: gr.per100, note: gr.note || null };
+  });
+  return {
+    name: raw.name || '', total_cooked_g: raw.total_cooked_g ?? null, portions: raw.portions ?? null, ingredients,
+    questions: cleanQuestions([raw.questions || []]), warnings: [...(raw.warnings || []), ...ingredients.filter((i) => i.note).map((i) => `${i.name}: ${i.note}`)],
+  };
 }

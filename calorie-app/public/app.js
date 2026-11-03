@@ -5,7 +5,7 @@ const r0 = (n) => Math.round(Number(n) || 0);
 const r1 = (n) => Math.round((Number(n) || 0) * 10) / 10;
 const NUT = ['kcal', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium'];
 const MEALS = [['breakfast', 'Breakfast', '🍳'], ['lunch', 'Lunch', '🥗'], ['dinner', 'Dinner', '🍛'], ['snack', 'Snacks', '🍪']];
-const CAT_EMOJI = { fruit: '🍎', vegetable: '🥦', grain: '🍚', indian: '🍛', protein: '🍗', dairy: '🥛', fat: '🧈', nuts: '🥜', snack: '🍿', packaged: '📦', dessert: '🍰', fastfood: '🍔', drink: '🥤', alcohol: '🍺', bread: '🍞', cereal: '🥣', legume: '🫘', condiment: '🧂', spread: '🥜', sweetener: '🍯', supplement: '💪', soup: '🍲', breakfast: '🥞' };
+const CAT_EMOJI = { fruit: '🍎', vegetable: '🥦', grain: '🍚', indian: '🍛', protein: '🍗', dairy: '🥛', fat: '🧈', nuts: '🥜', snack: '🍿', packaged: '📦', dessert: '🍰', fastfood: '🍔', drink: '🥤', alcohol: '🍺', bread: '🍞', cereal: '🥣', legume: '🫘', condiment: '🧂', spread: '🥜', sweetener: '🍯', supplement: '💪', soup: '🍲', breakfast: '🥞', 'meal prep': '🍱' };
 const emoji = (c) => CAT_EMOJI[c] || '🍽️';
 
 const state = { tab: 'today', date: today(), log: [], settings: {}, ai: {}, foodsQ: '', foodsCat: '', foodsMine: false };
@@ -176,8 +176,9 @@ function addMenu() {
       <button class="tile" data-go="label"><span class="e">🏷️</span><b>Scan a food label</b><span>Back of pack. Saved so it is recognised next time</span></button>
       <button class="tile" data-go="search"><span class="e">🔎</span><b>Search foods</b><span>${state.foodCount || 530}+ foods, Coles favourites, barcode</span></button>
       <button class="tile" data-go="quick"><span class="e">✍️</span><b>Quick add</b><span>Just type calories and macros</span></button>
+      <button class="tile" data-go="recipe" style="grid-column:span 2"><span class="e">🍱</span><b>Meal prep / cooked batch</b><span>Add what you cooked once, log portions all week. Remembered for photos too</span></button>
     </div>`);
-  sh.el.querySelectorAll('[data-go]').forEach((b) => b.onclick = () => { sh.close(); ({ meal: mealFlow, label: labelFlow, search: () => searchSheet({}), quick: quickAdd })[b.dataset.go](); });
+  sh.el.querySelectorAll('[data-go]').forEach((b) => b.onclick = () => { sh.close(); ({ meal: mealFlow, label: labelFlow, search: () => searchSheet({}), quick: quickAdd, recipe: recipeFlow })[b.dataset.go](); });
 }
 
 // ---------------------------------------------------------------- MEAL PHOTO flow
@@ -213,7 +214,7 @@ function mealFlow() {
     try {
       const res = await api('/analyze/meal', { body: { images: photos, hint: hintVal } });
       clearInterval(tick);
-      reviewMeal(sh, res, { thumb, meal: mealVal });
+      reviewMeal(sh, res, { thumb, meal: mealVal, photos, hint: hintVal, answers: [] });
     } catch (e) {
       clearInterval(tick);
       sh.set(`<div class="banner bad">${esc(e.message)}</div>${e.code === 'no_key' || e.code === 'bad_key' ? '<button class="btn" id="tosettings">Open Settings</button>' : ''}<button class="btn ghost" id="retry" style="margin-top:10px">Try again</button>`);
@@ -228,9 +229,10 @@ const confCls = (c) => (c >= 0.75 ? 'g' : c >= 0.5 ? 'w' : 'b');
 const srcLabel = { db: 'database', saved: 'your product', ai: 'AI estimate', unknown: 'unknown', ingredients: 'from ingredients' };
 
 function reviewMeal(sh, res, ctx) {
-  const A = { mult: 1, meal: ctx.meal, items: res.items.map((i) => ({ ...i, k: 1, open: false, base: { grams: i.grams, nutrition: i.nutrition, ingredients: i.ingredients } })) };
+  const A = { mult: 1, ans: {}, meal: ctx.meal, items: res.items.map((i) => ({ ...i, k: 1, open: false, base: { grams: i.grams, nutrition: i.nutrition, ingredients: i.ingredients } })) };
   const disp = (it) => { const f = it.k * A.mult; return { grams: it.base.grams * f, nutrition: scaleN(it.base.nutrition, f), ingredients: it.base.ingredients.map((g) => ({ ...g, grams: g.grams * f, nutrition: scaleN(g.nutrition, f) })) }; };
   const totals = () => sumN(A.items.map((it) => disp(it).nutrition));
+  const redraw = () => { const bd = sh.el.querySelector('.bd'); const y = bd.scrollTop; draw(); bd.scrollTop = y; };
 
   const draw = () => {
     const t = totals(), g = goal();
@@ -239,6 +241,7 @@ function reviewMeal(sh, res, ctx) {
       <div class="small mute">${esc(res.summary || '')}</div>
       ${res.scale_reference ? `<div class="small mute" style="margin-top:4px">📏 ${esc(res.scale_reference)}</div>` : ''}
       ${res.warnings?.length ? res.warnings.map((w) => `<div class="banner warn small">${esc(w)}</div>`).join('') : ''}
+      ${res.questions?.length ? `<div class="card qcard"><b>A few quick questions</b><div class="small mute">Your answers sharpen the estimate and are remembered for next time.</div>${res.questions.map((q, qi) => `<div class="q" data-q="${qi}"><div>${esc(q.question)}${q.item_name ? ` <span class="chip">${esc(q.item_name)}</span>` : ''}</div><div class="chips">${q.options.map((o) => `<button data-opt="${esc(o)}" class="${A.ans[qi] === o ? 'on' : ''}">${esc(o)}</button>`).join('')}</div><input data-free placeholder="or type your own, e.g. 3 tsp"></div>`).join('')}<button class="btn" id="reask">Update estimate with my answers</button><div class="small mute" style="margin-top:6px">This re-runs the analysis, so do manual gram edits after.</div></div>` : ''}
       ${A.items.map((it, i) => { const d = disp(it); return `
         <div class="item" data-i="${i}">
           <div class="t"><div class="grow"><div class="nm">${esc(it.name)}</div>
@@ -250,8 +253,8 @@ function reviewMeal(sh, res, ctx) {
           ${it.reasoning ? `<div class="small mute" style="margin-top:8px">💭 ${esc(it.reasoning)}</div>` : ''}
           ${it.flags?.map((f) => `<div class="small" style="color:var(--warn);margin-top:6px">⚠ ${esc(f)}</div>`).join('') || ''}
           ${d.ingredients.length ? `<button class="small" data-open style="color:var(--accent);margin-top:8px">${it.open ? '▾' : '▸'} ${d.ingredients.length} ingredients</button>${it.open ? `<div class="ing">${d.ingredients.map((x) => `<div><span>${esc(x.name)}${x.hidden ? ' <span class="chip w">hidden</span>' : ''} <span class="chip ${x.source === 'ai' ? 'w' : ''}">${srcLabel[x.source] || x.source}</span></span><span class="mute">${r0(x.grams)} g · ${r0(x.nutrition.kcal)}</span></div>`).join('')}</div>` : ''}` : ''}
+          ${d.ingredients.length ? '<button class="small" data-savedish style="color:var(--accent2);margin:8px 0 0 14px">💾 Save as my dish</button>' : ''}
         </div>`; }).join('') || '<div class="empty">Nothing detected. Try a clearer photo or add items manually.</div>'}
-      ${res.questions?.length ? `<div class="banner info small"><b>To sharpen this:</b><br>${res.questions.map(esc).join('<br>')}<br><span class="mute">Re-run with the answer in the note box.</span></div>` : ''}
       <button class="btn ghost" id="addmore" style="margin-top:6px">+ Add something it missed</button>
       <div class="totalbar">
         <div class="card" style="margin:8px 0">
@@ -273,6 +276,23 @@ function reviewMeal(sh, res, ctx) {
       el.querySelectorAll('[data-s]').forEach((b) => b.onclick = () => setG(Math.max(1, disp(it).grams + Number(b.dataset.s))));
       $('[data-rm]', el).onclick = () => { A.items.splice(+el.dataset.i, 1); draw(); };
       $('[data-open]', el)?.addEventListener('click', () => { it.open = !it.open; const y = sh.el.querySelector('.bd').scrollTop; draw(); sh.el.querySelector('.bd').scrollTop = y; });
+      $('[data-savedish]', el)?.addEventListener('click', () => { const d = disp(it); recipeEditor({ name: it.name, total: r0(d.grams), portions: 1, ings: d.ingredients.map((x) => ({ name: x.name, grams: r1(x.grams), hidden: x.hidden, per100: x.per100, source: x.source, food_id: x.food_id })) }); });
+    });
+    sh.el.querySelectorAll('.q').forEach((qel) => {
+      const qi = +qel.dataset.q;
+      qel.querySelectorAll('[data-opt]').forEach((b) => b.onclick = () => { A.ans[qi] = A.ans[qi] === b.dataset.opt ? '' : b.dataset.opt; redraw(); });
+      $('[data-free]', qel).oninput = (e) => { A.ans[qi] = e.target.value.trim(); qel.querySelectorAll('[data-opt]').forEach((b) => b.classList.remove('on')); };
+    });
+    $('#reask', sh.el)?.addEventListener('click', async () => {
+      const prev = ctx.answers || [];
+      const fresh = res.questions.map((q, qi) => ({ item_name: q.item_name, question: q.question, answer: A.ans[qi] || '' })).filter((a) => a.answer);
+      if (!fresh.length) return toast('Pick or type an answer first');
+      const answers = [...prev, ...fresh];
+      sh.set(`<div class="scan"><img src="${ctx.photos[0]}" style="height:100%;width:100%;object-fit:cover;opacity:.5"></div><div class="ai-step">Re-estimating with your answers…</div>`);
+      try {
+        const r2 = await api('/analyze/meal', { body: { images: ctx.photos, hint: ctx.hint, answers } });
+        reviewMeal(sh, r2, { ...ctx, meal: A.meal, answers });
+      } catch (e) { toast(e.message); draw(); }
     });
     $('#addmore', sh.el).onclick = () => searchSheet({
       confirmLabel: 'Add to meal',
@@ -353,7 +373,7 @@ function searchSheet({ onConfirm, confirmLabel }) {
     <div id="res"></div>
     <div id="online"></div>`);
   let cat = '', mine = false, t;
-  const cats = ['all', 'mine', 'packaged', 'indian', 'protein', 'fruit', 'vegetable', 'dairy', 'bread', 'drink', 'fastfood', 'dessert', 'snack'];
+  const cats = ['all', 'mine', 'meal prep', 'packaged', 'indian', 'protein', 'fruit', 'vegetable', 'dairy', 'bread', 'drink', 'fastfood', 'dessert', 'snack'];
   const drawCats = () => { $('#cats', sh.el).innerHTML = cats.map((c) => `<button class="${(c === 'all' && !cat && !mine) || c === cat || (c === 'mine' && mine) ? 'on' : ''}" data-c="${c}">${c === 'mine' ? '⭐ My foods' : c}</button>`).join(''); sh.el.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => { mine = b.dataset.c === 'mine'; cat = ['all', 'mine'].includes(b.dataset.c) ? '' : b.dataset.c; drawCats(); go(); }); };
   const go = async () => {
     const q = $('#q', sh.el).value.trim();
@@ -407,11 +427,12 @@ function amountSheet(food, { onConfirm, confirmLabel = 'Log', afterLog } = {}) {
     const n = scaleN(food, grams / 100);
     sh.set(`
       <div class="card" style="margin-top:4px"><div class="spread"><div><div style="font-size:34px;font-weight:800">${r0(n.kcal)} <span class="small mute">kcal</span></div><div class="small mute">P ${r1(n.protein)} · C ${r1(n.carbs)} · F ${r1(n.fat)} · fibre ${r1(n.fiber)} · sugar ${r1(n.sugar)}</div></div>${food.thumb ? `<img src="${esc(food.thumb)}" style="height:60px;border-radius:12px">` : `<span style="font-size:40px">${emoji(food.category)}</span>`}</div></div>
+      ${food.source === 'recipe' ? recipeSummary(food) : ''}
       <label>Amount (g or ml)</label><input id="g" type="number" inputmode="decimal" value="${r1(grams)}">
       <div class="chips" style="margin-top:8px"><button data-m="${food.serving_g}">1 × ${esc(food.serving_label)}</button><button data-m="${food.serving_g * 2}">2 ×</button><button data-m="${food.serving_g / 2}">½ ×</button><button data-m="100">100 g</button><button data-m="50">50 g</button><button data-m="200">200 g</button></div>
       ${onConfirm ? '' : `<label>Meal</label><select id="m">${MEALS.map(([k, l]) => `<option value="${k}" ${k === meal ? 'selected' : ''}>${l}</option>`).join('')}</select>`}
       <button class="btn" id="ok" style="margin-top:16px">${esc(confirmLabel)}</button>
-      ${food.source !== 'seed' ? `<div class="grid2" style="margin-top:10px"><button class="btn ghost" id="edit">Edit food</button><button class="btn danger" id="rm">Delete food</button></div>` : '<div class="small mute" style="margin-top:12px">Built-in values are typical averages. Scan your own pack for exact numbers and it will take priority.</div>'}`);
+      ${food.source !== 'seed' ? `<div class="grid2" style="margin-top:10px"><button class="btn ghost" id="edit">${food.source === 'recipe' ? 'Edit recipe' : 'Edit food'}</button><button class="btn danger" id="rm">Delete food</button></div>` : '<div class="small mute" style="margin-top:12px">Built-in values are typical averages. Scan your own pack for exact numbers and it will take priority.</div>'}`);
     $('#g', sh.el).oninput = (e) => { grams = Number(e.target.value) || 0; const n2 = scaleN(food, grams / 100); sh.el.querySelector('.card div div').firstChild.textContent = r0(n2.kcal) + ' '; };
     sh.el.querySelectorAll('[data-m]').forEach((b) => b.onclick = () => { grams = Number(b.dataset.m); draw(); });
     $('#m', sh.el)?.addEventListener('change', (e) => { meal = e.target.value; });
@@ -421,7 +442,7 @@ function amountSheet(food, { onConfirm, confirmLabel = 'Log', afterLog } = {}) {
       await api('/log/quick', { body: { food_id: food.id, grams, meal, date: state.date } });
       sh.close(); afterLog?.(); toast(`Logged ${r0(scaleN(food, grams / 100).kcal)} kcal`); await loadDay(); render();
     };
-    $('#edit', sh.el)?.addEventListener('click', () => { sh.close(); foodForm(food); });
+    $('#edit', sh.el)?.addEventListener('click', () => { sh.close(); if (food.source === 'recipe') editRecipe(food); else foodForm(food); });
     $('#rm', sh.el)?.addEventListener('click', async () => { if (confirm('Delete this food?')) { await api(`/foods/${food.id}`, { method: 'DELETE' }); sh.close(); toast('Deleted'); if (state.tab === 'foods') renderFoods(); } });
   };
   const closeUpper = () => { const top = sheetStack[sheetStack.length - 1]; if (top && top.title && top.el.querySelector('#q')) top.close(); };
@@ -457,6 +478,110 @@ function quickAdd() {
     await api('/log', { body: { entries: [{ date: state.date, meal: $('#m', sh.el).value, name: $('#n', sh.el).value || 'Quick add', grams: 0, kcal, protein: Number($('#p', sh.el).value) || 0, carbs: Number($('#c', sh.el).value) || 0, fat: Number($('#f', sh.el).value) || 0, source: 'quick' }] } });
     sh.close(); await loadDay(); render();
   };
+}
+
+
+// ---------------------------------------------------------------- MEAL PREP / RECIPES
+const pickNut = (f) => Object.fromEntries(NUT.map((k) => [k, Number(f[k]) || 0]));
+
+function recipeSummary(food) {
+  let r; try { r = JSON.parse(food.recipe || '{}'); } catch { return ''; }
+  if (!r.ingredients?.length) return '';
+  return `<details style="margin:8px 0"><summary class="small mute">🍱 ${r.ingredients.length} ingredients · ${r0(r.total_cooked_g)} g cooked · ${r.portions} portions</summary><div class="ing">${r.ingredients.map((i) => `<div><span>${esc(i.name)}${i.hidden ? ' <span class="chip w">hidden</span>' : ''}</span><span class="mute">${r0(i.grams)} g</span></div>`).join('')}</div></details>`;
+}
+
+function editRecipe(food) {
+  let r = {}; try { r = JSON.parse(food.recipe || '{}'); } catch { /* */ }
+  recipeEditor({ id: food.id, name: food.name, total: r.total_cooked_g, portions: r.portions, ings: (r.ingredients || []).map((i) => ({ ...i, source: 'saved' })), answers: r.answers || [] });
+}
+
+function recipeFlow() {
+  const sh = openSheet('Meal prep / cooked batch', `
+    <p class="small mute">Cook once, log portions all week. Tell me what went in (raw weights are best) and the weight of the whole finished pot. It is saved, so next time you just pick it, and meal photos will recognise it.</p>
+    <label>What did you cook?</label>
+    <textarea id="txt" rows="5" placeholder="e.g. Chicken rice for the week: 1 kg chicken thigh, 500 g basmati (dry), 3 tbsp oil, 2 onions, 1 tin tomatoes. Cooked weight 2.6 kg, 8 portions"></textarea>
+    <button class="btn" id="go" style="margin-top:14px">Build recipe with AI</button>
+    <button class="btn ghost" id="manual" style="margin-top:10px">Add ingredients manually</button>`);
+  $('#manual', sh.el).onclick = () => { sh.close(); recipeEditor({}); };
+  $('#go', sh.el).onclick = async () => {
+    const text = $('#txt', sh.el).value.trim();
+    if (!text) return toast('Describe what you cooked first');
+    sh.set('<div class="scan"><span style="font-size:46px;position:relative">🍱</span></div><div class="ai-step">Working out ingredients and weights…</div>');
+    try {
+      const r = await api('/recipes/parse', { body: { text } });
+      sh.close();
+      recipeEditor({ name: r.name, total: r.total_cooked_g, portions: r.portions, ings: r.ingredients, questions: r.questions, warnings: r.warnings, text });
+    } catch (e) {
+      sh.set(`<div class="banner bad">${esc(e.message)}</div><button class="btn ghost" id="back">Back</button>`);
+      $('#back', sh.el).onclick = () => { sh.close(); recipeFlow(); };
+    }
+  };
+}
+
+function recipeEditor(init) {
+  const R = { id: init.id, name: init.name || '', total: init.total || '', portions: init.portions || '', ings: (init.ings || []).map((i) => ({ ...i })), questions: init.questions || [], ans: {}, answers: init.answers || [], text: init.text || '', warnings: init.warnings || [] };
+  const sh = openSheet(R.id ? 'Edit recipe' : 'Your recipe', '');
+  const calc = () => {
+    const tot = sumN(R.ings.map((i) => scaleN(i.per100, (Number(i.grams) || 0) / 100)));
+    const raw = R.ings.reduce((s, i) => s + (Number(i.grams) || 0), 0);
+    const cooked = Number(R.total) > 0 ? Number(R.total) : raw;
+    const n = Math.max(1, Number(R.portions) || 1);
+    const per100 = scaleN(tot, 100 / (cooked || 1)), sg = cooked / n;
+    return { tot, raw, cooked, n, per100, sg, per: scaleN(per100, sg / 100) };
+  };
+  const drawSum = () => {
+    const c = calc(), el = $('#rsum', sh.el); if (!el) return;
+    el.innerHTML = R.ings.length ? `<div class="spread"><div><div style="font-size:34px;font-weight:800">${r0(c.per.kcal)} <span class="small mute">kcal / portion</span></div>
+      <div class="small mute">P ${r0(c.per.protein)} · C ${r0(c.per.carbs)} · F ${r0(c.per.fat)} · 1 portion = ${r0(c.sg)} g</div></div><span style="font-size:36px">🍱</span></div>
+      <div class="small mute" style="margin-top:8px">Whole batch ${r0(c.tot.kcal).toLocaleString()} kcal · ${r0(c.per100.kcal)} kcal per 100 g cooked · ${r0(c.raw)} g raw → ${r0(c.cooked)} g ${Number(R.total) > 0 ? 'cooked' : '(set cooked weight!)'}</div>` : '<div class="small mute">Add ingredients to see the numbers.</div>';
+    sh.el.querySelectorAll('[data-rk]').forEach((s) => { const i = R.ings[+s.dataset.rk]; if (i) s.textContent = r0(scaleN(i.per100, (Number(i.grams) || 0) / 100).kcal) + ' kcal'; });
+  };
+  const redraw = () => { const bd = sh.el.querySelector('.bd'); const y = bd.scrollTop; draw(); bd.scrollTop = y; };
+  const draw = () => {
+    sh.set(`
+      <label>Name</label><input id="rn" value="${esc(R.name)}" placeholder="e.g. Sunday chicken rice">
+      ${R.warnings.map((w) => `<div class="banner warn small">${esc(w)}</div>`).join('')}
+      <label>Ingredients (raw / as added)</label>
+      ${R.ings.map((i, k) => `<div class="ingrow"><div><div>${esc(i.name)}${i.hidden ? ' <span class="chip w">hidden</span>' : ''}</div><div class="small mute"><span class="chip ${i.source === 'ai' || i.source === 'unknown' ? 'w' : ''}">${srcLabel[i.source] || i.source || 'database'}</span> <span data-rk="${k}"></span></div></div><input type="number" inputmode="decimal" data-g="${k}" value="${r1(i.grams)}"><button class="step" data-rm="${k}" style="width:30px;height:30px;border-radius:9px;background:var(--card2)">✕</button></div>`).join('') || '<div class="small mute">No ingredients yet.</div>'}
+      <button class="btn ghost" id="addi" style="margin-top:10px">+ Add ingredient</button>
+      <div class="grid2"><div><label>Total cooked weight (g)</label><input id="rt" type="number" inputmode="decimal" value="${R.total}" placeholder="weigh the whole pot"></div><div><label>Portions</label><input id="rp" type="number" inputmode="decimal" value="${R.portions}" placeholder="e.g. 8"></div></div>
+      <div class="card" id="rsum" style="margin-top:14px"></div>
+      ${R.questions.length && R.text ? `<div class="card qcard"><b>A few quick questions</b><div class="small mute">Answers sharpen the numbers and are remembered.</div>${R.questions.map((q, qi) => `<div class="q" data-q="${qi}"><div>${esc(q.question)}</div><div class="chips">${q.options.map((o) => `<button data-opt="${esc(o)}" class="${R.ans[qi] === o ? 'on' : ''}">${esc(o)}</button>`).join('')}</div><input data-free placeholder="or type your own"></div>`).join('')}<button class="btn" id="rask">Update with my answers</button><div class="small mute" style="margin-top:6px">This rebuilds the ingredient list, so do manual edits after.</div></div>` : ''}
+      <button class="btn" id="rsave" style="margin-top:6px">${R.id ? 'Save changes' : 'Save recipe'}</button>`);
+    $('#rn', sh.el).oninput = (e) => { R.name = e.target.value; };
+    $('#rt', sh.el).oninput = (e) => { R.total = e.target.value; drawSum(); };
+    $('#rp', sh.el).oninput = (e) => { R.portions = e.target.value; drawSum(); };
+    sh.el.querySelectorAll('[data-g]').forEach((inp) => inp.oninput = () => { R.ings[+inp.dataset.g].grams = Number(inp.value) || 0; drawSum(); });
+    sh.el.querySelectorAll('[data-rm]').forEach((b) => b.onclick = () => { R.ings.splice(+b.dataset.rm, 1); redraw(); });
+    $('#addi', sh.el).onclick = () => searchSheet({ confirmLabel: 'Add ingredient', onConfirm: (food, grams) => { R.ings.push({ name: food.name, grams, hidden: false, per100: pickNut(food), source: food.source === 'seed' ? 'db' : 'saved', food_id: food.id }); redraw(); } });
+    sh.el.querySelectorAll('.q').forEach((qel) => {
+      const qi = +qel.dataset.q;
+      qel.querySelectorAll('[data-opt]').forEach((b) => b.onclick = () => { R.ans[qi] = R.ans[qi] === b.dataset.opt ? '' : b.dataset.opt; redraw(); });
+      $('[data-free]', qel).oninput = (e) => { R.ans[qi] = e.target.value.trim(); qel.querySelectorAll('[data-opt]').forEach((b) => b.classList.remove('on')); };
+    });
+    $('#rask', sh.el)?.addEventListener('click', async () => {
+      const fresh = R.questions.map((q, qi) => ({ item_name: q.item_name, question: q.question, answer: R.ans[qi] || '' })).filter((a) => a.answer);
+      if (!fresh.length) return toast('Pick or type an answer first');
+      R.answers = [...R.answers, ...fresh];
+      sh.set('<div class="scan"><span style="font-size:46px;position:relative">🍱</span></div><div class="ai-step">Updating the recipe…</div>');
+      try {
+        const r = await api('/recipes/parse', { body: { text: R.text, answers: R.answers } });
+        R.ings = r.ingredients; R.questions = r.questions; R.ans = {}; R.warnings = r.warnings;
+        if (!R.name) R.name = r.name; if (!(Number(R.total) > 0) && r.total_cooked_g) R.total = r.total_cooked_g; if (!(Number(R.portions) > 0) && r.portions) R.portions = r.portions;
+      } catch (e) { toast(e.message); }
+      draw();
+    });
+    $('#rsave', sh.el).onclick = async () => {
+      if (!R.name.trim()) return toast('Give it a name');
+      if (!R.ings.length) return toast('Add at least one ingredient');
+      try {
+        const res = await api('/recipes', { body: { id: R.id, name: R.name, total_cooked_g: Number(R.total) || 0, portions: Number(R.portions) || 1, answers: R.answers, ingredients: R.ings.map((i) => ({ name: i.name, grams: Number(i.grams) || 0, hidden: !!i.hidden, food_id: i.food_id ?? null, per100: i.per100 })) } });
+        sh.close(); toast('Recipe saved. Log a portion any time.'); amountSheet(res.food, {});
+      } catch (e) { toast(e.message); }
+    };
+    drawSum();
+  };
+  draw();
 }
 
 // ---------------------------------------------------------------- FOODS tab
@@ -542,7 +667,9 @@ function renderSettings() {
     <div class="small mute" style="margin-top:10px">Estimate only (Mifflin-St Jeor). Adjust after 2-3 weeks of real weigh-ins. Not medical advice.</div>
   </div>
   <h2>Or set targets by hand</h2>
-  <div class="card"><div class="grid2"><div><label>Calories</label><input id="gk" type="number" value="${esc(s.goal_kcal || '')}"></div><div><label>Protein g</label><input id="gp" type="number" value="${esc(s.goal_protein || '')}"></div><div><label>Carbs g</label><input id="gc" type="number" value="${esc(s.goal_carbs || '')}"></div><div><label>Fat g</label><input id="gf" type="number" value="${esc(s.goal_fat || '')}"></div></div><button class="btn ghost" id="savegoal" style="margin-top:12px">Save targets</button></div>`;
+  <div class="card"><div class="grid2"><div><label>Calories</label><input id="gk" type="number" value="${esc(s.goal_kcal || '')}"></div><div><label>Protein g</label><input id="gp" type="number" value="${esc(s.goal_protein || '')}"></div><div><label>Carbs g</label><input id="gc" type="number" value="${esc(s.goal_carbs || '')}"></div><div><label>Fat g</label><input id="gf" type="number" value="${esc(s.goal_fat || '')}"></div></div><button class="btn ghost" id="savegoal" style="margin-top:12px">Save targets</button></div>
+  <h2>What I remember about how you cook</h2>
+  <div class="card"><div id="habits" class="small mute">Loading…</div></div>`;
   const prof = () => ({ sex: $('#sex').value, age: $('#age').value, height_cm: $('#h').value, weight_kg: $('#w').value, activity: $('#act').value, weekly_loss_kg: $('#loss').value });
   const showPlan = () => { const p = calcPlan(prof()); $('#plan').innerHTML = p ? `<div class="banner ok" style="margin-top:12px">Maintenance <b>${p.tdee}</b> kcal → eat <b>${p.target}</b> kcal/day<br><span class="small">Protein ${p.protein} g · Carbs ${p.carbs} g · Fat ${p.fat} g${p.floored ? '<br>Held at a safe minimum, so your real loss rate will be slower.' : ''}</span></div>` : '<div class="small mute" style="margin-top:10px">Fill in age, height and weight.</div>'; };
   ['sex', 'age', 'h', 'w', 'act', 'loss'].forEach((id) => $('#' + id).addEventListener('input', showPlan)); showPlan();
@@ -555,6 +682,11 @@ function renderSettings() {
       toast('AI settings saved'); await loadSettings(); render();
     } catch (e) { toast(e.message); }
   };
+  api('/habits').then((h) => {
+    const box = $('#habits'); if (!box) return;
+    box.innerHTML = h.length ? `<div class="ing" style="border:0;margin:0;padding:0">${h.map((x) => `<div><span>${x.item ? `<b>${esc(x.item)}</b>: ` : ''}${esc(x.question)}</span><span style="color:var(--text)">${esc(x.answer)}</span></div>`).join('')}</div><button class="btn danger sm" id="clrh" style="margin-top:12px">Forget these</button><div style="margin-top:8px">The AI uses these as defaults when it analyses photos, and only asks again when something looks different.</div>` : 'Nothing yet. When the AI asks a question (like how much oil) and you answer, it is remembered here.';
+    $('#clrh')?.addEventListener('click', async () => { await api('/habits', { method: 'DELETE' }); renderSettings(); });
+  }).catch(() => {});
   $('#clearkey')?.addEventListener('click', async () => { await api('/settings/openai', { body: { key: '' } }); await loadSettings(); render(); });
 }
 

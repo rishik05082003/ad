@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS foods (
   barcode TEXT DEFAULT '',
   ingredients TEXT DEFAULT '',
   thumb TEXT DEFAULT '',
+  recipe TEXT DEFAULT '',
   use_count INTEGER DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
@@ -46,9 +47,16 @@ CREATE TABLE IF NOT EXISTS log (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_log_date ON log(date);
+CREATE TABLE IF NOT EXISTS habits (
+  item_norm TEXT NOT NULL, question_norm TEXT NOT NULL, item TEXT DEFAULT '', question TEXT NOT NULL, answer TEXT NOT NULL,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (item_norm, question_norm)
+);
 CREATE TABLE IF NOT EXISTS weights (date TEXT PRIMARY KEY, kg REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
 `);
+
+// migrate databases created before recipes existed
+if (!db.prepare('PRAGMA table_info(foods)').all().some((c) => c.name === 'recipe')) db.exec("ALTER TABLE foods ADD COLUMN recipe TEXT DEFAULT ''");
 
 // ---------- helpers ----------
 const nul = (v) => (v === undefined ? null : v);
@@ -109,7 +117,7 @@ export function allFoods() {
 export const getFood = (id) => get('SELECT * FROM foods WHERE id=?', id);
 export const foodByBarcode = (code) => (code ? get("SELECT * FROM foods WHERE barcode=? AND barcode<>''", code) : null);
 
-const FOOD_COLS = ['name', 'brand', 'aliases', ...NUTRIENTS, 'serving_g', 'serving_label', 'category', 'source', 'barcode', 'ingredients', 'thumb'];
+const FOOD_COLS = ['name', 'brand', 'aliases', ...NUTRIENTS, 'serving_g', 'serving_label', 'category', 'source', 'barcode', 'ingredients', 'thumb', 'recipe'];
 
 export function insertFood(f) {
   const vals = FOOD_COLS.map((k) => f[k] ?? (NUTRIENTS.includes(k) || k === 'serving_g' ? 0 : ''));
@@ -137,8 +145,24 @@ export function bumpUse(id) {
 }
 /** Foods the user created or scanned. Used so photo analysis can recognise their packaged products later. */
 export function savedProducts(limit = 80) {
-  return all("SELECT * FROM foods WHERE source<>'seed' ORDER BY use_count DESC, id DESC LIMIT ?", limit);
+  return all("SELECT * FROM foods WHERE source<>'seed' ORDER BY (source='recipe') DESC, use_count DESC, id DESC LIMIT ?", limit);
 }
+
+// ---------- habits (answers to clarifying questions, remembered) ----------
+const hnorm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+let lastTs = 0; // monotonic so the most recently answered habit always sorts first
+export function saveHabits(list) {
+  for (const h of list || []) {
+    if (!h?.question || !String(h.answer || '').trim()) continue;
+    lastTs = Math.max(Date.now(), lastTs + 1);
+    run(`INSERT INTO habits(item_norm,question_norm,item,question,answer,updated_at) VALUES(?,?,?,?,?,?)
+         ON CONFLICT(item_norm,question_norm) DO UPDATE SET answer=excluded.answer, question=excluded.question, item=excluded.item, updated_at=excluded.updated_at`,
+      hnorm(h.item_name), hnorm(h.question), String(h.item_name || '').slice(0, 80), String(h.question).slice(0, 200), String(h.answer).slice(0, 200), String(lastTs));
+  }
+  run('DELETE FROM habits WHERE rowid NOT IN (SELECT rowid FROM habits ORDER BY updated_at DESC, rowid DESC LIMIT 60)');
+}
+export const listHabits = (limit = 25) => all('SELECT item,question,answer FROM habits ORDER BY updated_at DESC, rowid DESC LIMIT ?', limit);
+export const deleteHabits = () => run('DELETE FROM habits');
 
 // ---------- log ----------
 const LOG_COLS = ['date', 'meal', 'name', 'grams', ...NUTRIENTS, 'food_id', 'group_id', 'source', 'confidence', 'details', 'thumb'];

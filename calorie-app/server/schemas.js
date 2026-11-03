@@ -13,6 +13,17 @@ export const per100Schema = (nullable = false) => {
   };
 };
 
+const QUESTION = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['item_name', 'question', 'options'],
+  properties: {
+    item_name: { ...s, description: 'The item this is about, exactly as named in items, or empty string if about the whole meal' },
+    question: { ...s, description: 'Short, concrete, answerable in a few words, e.g. "How much oil or ghee was used?"' },
+    options: { type: 'array', items: s, description: '2 to 4 realistic quick answers, e.g. ["1 tsp","1 tbsp","2 tbsp","None"]' },
+  },
+};
+
 export const MEAL_SCHEMA = {
   type: 'object',
   additionalProperties: false,
@@ -51,7 +62,7 @@ export const MEAL_SCHEMA = {
       },
     },
     warnings: { type: 'array', items: s },
-    questions: { type: 'array', items: s, description: 'Things that would sharpen the estimate if the user answered.' },
+    questions: { type: 'array', items: QUESTION, description: '0 to 4 clarifying questions whose answers would change the calories noticeably.' },
   },
 };
 
@@ -73,5 +84,27 @@ export const LABEL_SCHEMA = {
     ingredients_text: s,
     allergens: { type: 'array', items: s },
     notes: s,
+  },
+};
+
+export const RECIPE_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['name', 'total_cooked_g', 'portions', 'ingredients', 'questions', 'warnings'],
+  properties: {
+    name: s,
+    total_cooked_g: { ...nn, description: 'Final weight of the whole cooked batch in grams if stated, else null' },
+    portions: { ...nn, description: 'Number of portions if stated, else null' },
+    ingredients: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['name', 'grams', 'hidden', 'per_100g'],
+        properties: { name: { ...s, description: 'Ingredient as added, with its state, e.g. "chicken thigh, raw", "basmati rice, dry", "cooking oil"' }, grams: n, hidden: { type: 'boolean' }, per_100g: per100Schema() },
+      },
+    },
+    questions: { type: 'array', items: QUESTION },
+    warnings: { type: 'array', items: s },
   },
 };

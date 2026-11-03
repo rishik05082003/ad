@@ -24,6 +24,11 @@ Open **Settings** and paste it in the OpenAI box. The server stores it in `data/
 
 You review everything on an editable screen (grams, remove items, add missed items, portion slider) before it is logged.
 
+## Questions, memory and meal prep
+
+- **Clarifying questions.** After a photo analysis the AI asks only what would move the calories (how much oil or ghee, sugar in the chai, sauce amount, how much of the batch you served), with tap-to-answer options. Answer and it re-estimates. Your answers are remembered as habits (see Settings), so it stops asking the same thing and applies them next time.
+- **Meal prep / cooked batch.** Tap + then Meal prep. Describe what went in (raw weights) and the weight of the whole cooked pot, or add ingredients by hand. Per 100 g is calculated on the cooked weight, so you get exact per-portion numbers. It is saved as a food, so you pick it from search and log portions all week. It is also shown to the photo analysis, which will recognise your own dish on the plate. In a photo review, any dish with ingredients has a "Save as my dish" button too.
+
 ## Label scanning ("recognise it later")
 
 Photograph the back of a pack. The nutrition table is transcribed, normalised to per 100 g (kJ to kcal, per-serving to per-100g, energy checked against macros) and saved under **My foods**. After that it is found by name, by barcode, and it is passed to the photo analysis so it can be recognised in meal photos. Open Food Facts search (Australian products first) and barcode lookup are built in for items you do not want to photograph.

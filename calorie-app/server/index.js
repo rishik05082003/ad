@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as store from './db.js';
 import { searchFoods } from './match.js';
-import { analyzeMeal, analyzeLabel } from './analyze.js';
+import { analyzeMeal, analyzeLabel, parseRecipe } from './analyze.js';
+import { saveRecipe, computeRecipe } from './recipes.js';
 import { saveProduct, offBarcode, offSearch } from './products.js';
 import { getApiKey, keySource, setApiKey, getModel, setModel } from './config.js';
 import { AIError } from './openai.js';
@@ -34,6 +35,9 @@ const cleanImages = (arr) => {
   return arr;
 };
 const settingsOut = () => ({ ...store.allSettings() });
+const cleanAnswers = (a) => (Array.isArray(a) ? a : []).slice(0, 12)
+  .map((x) => ({ item_name: String(x?.item_name || '').slice(0, 80), question: String(x?.question || '').slice(0, 200), answer: String(x?.answer || '').slice(0, 200) }))
+  .filter((x) => x.question && x.answer.trim());
 const toFood = (f) => f && ({ ...f, aliases: f.aliases || '' });
 
 const aiStatus = () => ({ has_key: !!getApiKey() || !!process.env.CAL_MOCK_AI, key_source: process.env.CAL_MOCK_AI ? 'mock' : keySource(), model: getModel(), mock: !!process.env.CAL_MOCK_AI });
@@ -87,8 +91,19 @@ route('POST', '/api/off/import', async ({ body }) => {
 route('POST', '/api/analyze/meal', async ({ body }) => {
   const images = cleanImages(body.images);
   const passes = Number(store.getSetting('ai_passes', 2));
-  return analyzeMeal({ images, hint: String(body.hint || '').slice(0, 500), passes }, { foods: store.allFoods(), saved: store.savedProducts(60) });
+  const answers = cleanAnswers(body.answers);
+  store.saveHabits(answers); // remembered for next time
+  return analyzeMeal({ images, hint: String(body.hint || '').slice(0, 500), passes, answers, habits: store.listHabits() }, { foods: store.allFoods(), saved: store.savedProducts(60) });
 });
+route('POST', '/api/recipes/parse', async ({ body }) => {
+  const answers = cleanAnswers(body.answers);
+  store.saveHabits(answers);
+  return parseRecipe({ text: String(body.text || '').slice(0, 4000), answers, habits: store.listHabits() }, { foods: store.allFoods() });
+});
+route('POST', '/api/recipes/compute', async ({ body }) => computeRecipe(body));
+route('POST', '/api/recipes', async ({ body }) => { const r = saveRecipe(body); return { food: toFood(r.food), computed: r.computed }; });
+route('GET', '/api/habits', async () => store.listHabits(60));
+route('DELETE', '/api/habits', async () => { store.deleteHabits(); return { ok: true }; });
 route('POST', '/api/analyze/label', async ({ body }) => {
   const images = cleanImages(body.images);
   const r = await analyzeLabel({ images, hint: String(body.hint || '').slice(0, 300) });
