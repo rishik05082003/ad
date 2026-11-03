@@ -1,0 +1,13 @@
+{
+  "name": "leanmode",
+  "version": "1.0.0",
+  "description": "LeanMode: calorie deficit tracker with AI photo analysis, label scanning and a built-in food database",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev:mock": "CAL_MOCK_AI=1 node --disable-warning=ExperimentalWarning server/index.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"tests/*.test.js\""
+  }
+}

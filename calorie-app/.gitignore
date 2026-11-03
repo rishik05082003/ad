@@ -1,0 +1,7 @@
+# local data: database, uploaded thumbnails and the saved API key live here
+data/
+.env
+*.db
+*.db-wal
+*.db-shm
+node_modules/
